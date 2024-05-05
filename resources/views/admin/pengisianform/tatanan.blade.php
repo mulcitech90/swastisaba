@@ -92,7 +92,7 @@
         })
         .then((data) => {
             if (data) {
-                window.location.href = "/pengisianform/kelembagaan/" + btoa(periodeId);
+                window.location.href = "/pengisianform/assessment/" + btoa(periodeId);
                 swal("Poof! Your imaginary file has been deleted!", {
                     icon: "success",
                 });
