@@ -7,6 +7,11 @@ use App\Models\TatananModel;
 use App\Models\TRXTatananModel as TrxTatanan;
 use App\Models\PertanyaanModel;
 use App\Models\TRXPertanyaanModel as TrxPertanyaan;
+use App\Models\KelembagaanModel as Lembaga;
+use App\Models\TrxKelembagaanModel as TrxLembaga;
+use App\Models\PertanyaanKelembagaanModel as PertanyaanLembaga;
+use App\Models\TrxPertanyaanKelembagaanModel as TrxPertanyaanLembaga;
+
 class PeriodeController extends Controller
 {
     public function periode()
@@ -86,6 +91,7 @@ class PeriodeController extends Controller
                 $pertanyaanTatanan->kat = $value->kat;
                 $pertanyaanTatanan->dinas_id = $value->dinas_id;
                 $pertanyaanTatanan->tatanan_id = $value->tatanan_id;
+                $pertanyaanTatanan->indikator_id = $value->indikator_id;
                 $pertanyaanTatanan->save();
             }
         }
@@ -108,6 +114,34 @@ class PeriodeController extends Controller
     }
     public function updateStatuslembaga(Request $request)
     {
+        $data_lembaga = Lembaga::all();
+        $data_pertanyaan = PertanyaanLembaga::all();
+        // insert to tabel trx_tatanan dan trx_pertanyaan
+
+        $checktatanan = TrxLembaga::where('id_periode', $request->periode_id)->first();
+        if (!$checktatanan) {
+            foreach ($data_lembaga as $key => $value) {
+                $tatanan = new TrxLembaga();
+                $tatanan->id_periode = $request->periode_id;
+                $tatanan->nama_kelembagaan = $value->nama_kelembagaan;
+                $tatanan->save();
+            }
+        }
+        $checkpertanyaan = TrxPertanyaanLembaga::where('id_periode', $request->periode_id)->first();
+        if (!$checkpertanyaan) {
+            foreach ($data_pertanyaan as $key => $value) {
+        $pertanyaanTatanan = new TrxPertanyaanLembaga;
+                $pertanyaanTatanan->id_periode = $request->periode_id;
+                $pertanyaanTatanan->no_pertanyaan = $value->no_pertanyaan;
+                $pertanyaanTatanan->pertanyaan = $value->pertanyaan;
+                $pertanyaanTatanan->id_kelembagaan = $value->id_kelembagaan;
+                $pertanyaanTatanan->jawaban_a = $value->jawaban_a;
+                $pertanyaanTatanan->jawaban_b = $value->jawaban_b;
+                $pertanyaanTatanan->file = $value->file;
+                $pertanyaanTatanan->save();
+            }
+        }
+
         $periodeId = $request->periode_id;
         $isChecked = $request->is_checked;
 

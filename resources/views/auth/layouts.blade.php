@@ -78,7 +78,7 @@
 													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
 												</li>
 												<li class="nav-item">
-													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_2">Intrument Penilaian</a>
+													<a class="nav-link {{ Request::is('pengisianform/*') ? 'active' : '' }}""  data-bs-toggle="tab" href="#kt_header_navs_tab_2">Intrument Penilaian</a>
 												</li>
 												<li class="nav-item">
 													<a class="nav-link {{ Request::is('periode/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_3">Assesment</a>
@@ -204,11 +204,15 @@
 										</div>
 										<!--end::Tab panel-->
 										<!--begin::Tab panel-->
-										<div class="tab-pane fade " id="kt_header_navs_tab_2">
+										<div class="tab-pane fade {{ Request::is('pengisianform/*') ? 'active show' : '' }}"" id="kt_header_navs_tab_2">
 											<!--begin::Wrapper-->
 											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
-
+                                                <div class="d-flex flex-column flex-lg-row gap-2">
+                                                    <a class="btn btn-sm btn-light-success fw-bold"  href="{{ route('pengisianform.tatanan') }}">Tatanan</a>
+                                                    <a class="btn btn-sm btn-light-primary fw-bold"  href="{{ route('pengisianform.lembaga') }}">Kelembagaan</a>
+                                               </div>
 											</div>
+
 											<!--end::Wrapper-->
 										</div>
 										<!--end::Tab panel-->

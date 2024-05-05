@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\MasterTatananController;
 use App\Http\Controllers\Admin\MasterIndikatorController;
 use App\Http\Controllers\Admin\MasterKelembagaanController;
 use App\Http\Controllers\Admin\PeriodeController;
+use App\Http\Controllers\Admin\PengisianFormController;
 
 
 
@@ -83,6 +84,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/periode/update-status', [PeriodeController::class, 'updateStatus'])->name('periode.updateStatus');
         Route::post('/periode/update-status/lembaga', [PeriodeController::class, 'updateStatuslembaga'])->name('periode.updateStatuslembaga');
         Route::get('/tatanan/{id}/delete', [PeriodeController::class, 'periode_destroy'])->name('periode.tatanan.delete');
+    });
+
+    Route::prefix('pengisianform')->group(function () {
+        Route::get('/tatanan', [PengisianFormController::class, 'periode_tatanan'])->name('pengisianform.tatanan');
+        Route::get('/assessment/{id}', [PengisianFormController::class, 'assessment']);
+        Route::get('/kelembagaan/{id}', [PengisianFormController::class, 'kelembagaan']);
+        Route::get('/pertanyaanlist/{id}', [PengisianFormController::class, 'pertanyaanlist']);
+        Route::get('/pertanyaanlembaga/{id}', [PengisianFormController::class, 'pertanyaanlembaga']);
+        Route::get('/lembaga', [PengisianFormController::class, 'periode_lembaga'])->name('pengisianform.lembaga');
+        Route::post('/updatelink', [PengisianFormController::class, 'updatelink'])->name('pengisianform.updatelink');
+        Route::post('/updatefilelembaga', [PengisianFormController::class,'updatefilelembaga'])->name('pengisianform.updatefilelembaga');
+
     });
 
 
