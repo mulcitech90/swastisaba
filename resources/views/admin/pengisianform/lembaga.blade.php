@@ -31,8 +31,8 @@
                             <tr class="fw-semibold fs-6 text-gray-800">
                                 <th>No</th>
                                 <th>Periode</th>
-                                <th>Jumlah Soal</th>
-                                <th>Soal Terjawab</th>
+                                <th class="text-center">Jumlah Soal</th>
+                                {{-- <th>Soal Terjawab</th> --}}
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -42,10 +42,19 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->periode }}</td>
-                                <td>21</td>
-                                <td>0</td>
+                                <td class="text-center">{{CountSoalLembaga($item->id, 'hitungsoal')}}</td>
                                 <td class="text-center">
-                                    <span class="text-primary fs-7 fw-bold">Open</span>
+                                    @if ($item->status_lembaga == 1)
+                                       <span class="badge badge-primary ">Terbuka</span>
+                                    @elseif ($item->status_lembaga == 2)
+                                       <span class="badge badge-secondary ">Pengisian</span>
+                                    @elseif ($item->status_lembaga == 3)
+                                       <span class="badge badge-info ">Verifikasi</span>
+                                    @elseif ($item->sstatus_lembagatatus == 4)
+                                       <span class="badge badge-warning ">Revisi</span>
+                                    @elseif ($item->status_lembaga == 5)
+                                       <span class="badge badge-success ">Selesai</span>
+                                    @endif
                                 </td>
 
                                 <td>

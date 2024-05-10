@@ -95,6 +95,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/lembaga', [PengisianFormController::class, 'periode_lembaga'])->name('pengisianform.lembaga');
         Route::post('/updatelink', [PengisianFormController::class, 'updatelink'])->name('pengisianform.updatelink');
         Route::post('/updatefilelembaga', [PengisianFormController::class,'updatefilelembaga'])->name('pengisianform.updatefilelembaga');
+        Route::post('/pengiisiansoal', [PengisianFormController::class,'pengisianSoal'])->name('pengisianform.pengisianSoal');
+        Route::post('/pengiisiansoallembaga', [PengisianFormController::class,'pengisianSoallembaga'])->name('pengisianform.pengisianSoallembaga');
+        Route::post('/submitpengisian', [PengisianFormController::class,'submitpengisian'])->name('pengisianform.submitpengisian');
+        Route::post('/uploadfile', [PengisianFormController::class, 'uploadfile'])->name('pengisianform.uploadfile');
+        Route::get('/downloadfile/{id}', [PengisianFormController::class, 'downloadfile']);
+
+
 
     });
 

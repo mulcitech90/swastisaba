@@ -41,4 +41,40 @@ if (!function_exists('TatananName')) {
         return $result;
     }
 }
+if (!function_exists('CountSoal')) {
+    function CountSoal($id, $tag) {
+        if ($tag == 'jumlahtatanan') {
+            $data = DB::table('trx_tatanan')->where('id_periode', $id)->count();
+        }else if ($tag == 'jumlahsoal'){
+            $data = DB::table('trx_pertanyaan')->where('id_periode', $id)->where('user_id', Auth::user()->id)->count();
+        }elseif ($tag == 'jumlahterjawab') {
+            $data = DB::table('trx_pertanyaan')->where('id_periode', $id)->where('user_id', Auth::user()->id)->where('jawaban', '!=', NULL)->count();
+        }else {
+            $data = 0;
+        }
+        if (!$data) {
+            $result = 0;
+        } else {
+            $result = $data;
+        }
+
+        return $result;
+    }
+}
+if (!function_exists('CountSoalLembaga')) {
+    function CountSoalLembaga($id, $tag) {
+        if ($tag == 'hitungsoal'){
+            $data = DB::table('trx_pertanyaan_lembaga')->where('id_periode', $id)->where('user_id', Auth::user()->id)->count();
+        }else {
+            $data = 0;
+        }
+        if (!$data) {
+            $result = 0;
+        } else {
+            $result = $data;
+        }
+
+        return $result;
+    }
+}
 ?>

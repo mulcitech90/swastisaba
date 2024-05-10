@@ -69,7 +69,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3">Data tidak ditemukan</td>
+                                <td colspan="6">Data tidak ditemukan</td>
                             </tr>
                             @endforelse
 

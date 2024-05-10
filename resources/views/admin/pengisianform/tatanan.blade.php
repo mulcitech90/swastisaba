@@ -33,7 +33,7 @@
                                 <th>Periode</th>
                                 <th class="text-center">Jumlah Tatanan</th>
                                 <th class="text-center">Jumlah Soal</th>
-                                <th class="text-center">Jumlah Terjawab</th>
+                                {{-- <th class="text-center">Jumlah Terjawab</th> --}}
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -43,10 +43,22 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->periode }}</td>
-                                <td class="text-center">9</td>
-                                <td class="text-center">9</td>
-                                <td class="text-center">9</td>
-                                <td class="text-center">status</td>
+                                <td class="text-center">{{CountSoal($item->id, 'jumlahtatanan')}}</td>
+                                <td class="text-center">{{CountSoal($item->id, 'jumlahsoal')}}</td>
+                                {{-- <td class="text-center">{{CountSoal($item->id, 'jumlahterjawab')}}</td> --}}
+                                <td class="text-center">
+                                    @if ($item->status == 1)
+                                       <span class="badge badge-primary ">Terbuka</span>
+                                    @elseif ($item->status == 2)
+                                       <span class="badge badge-secondary ">Pengisian</span>
+                                    @elseif ($item->status == 3)
+                                       <span class="badge badge-info ">Verifikasi</span>
+                                    @elseif ($item->status == 4)
+                                       <span class="badge badge-warning ">Revisi</span>
+                                    @elseif ($item->status == 5)
+                                       <span class="badge badge-success ">Selesai</span>
+                                    @endif
+                                </td>
 
                                 <td>
                                     <div class="text-center">

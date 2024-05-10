@@ -74,19 +74,36 @@
 										<div class="header-tabs overflow-auto mx-4 ms-lg-10 mb-5 mb-lg-0" id="kt_header_tabs" data-kt-swapper="true" data-kt-swapper-mode="prepend" data-kt-swapper-parent="{default: '#kt_header_navs_wrapper', lg: '#kt_brand_tabs'}">
 											<!--begin::Header tabs-->
 											<ul class="nav flex-nowrap text-nowrap">
-												<li class="nav-item">
+												@if (Auth::user()->role == 'pemda')
+                                                <li class="nav-item">
 													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
 												</li>
 												<li class="nav-item">
 													<a class="nav-link {{ Request::is('pengisianform/*') ? 'active' : '' }}""  data-bs-toggle="tab" href="#kt_header_navs_tab_2">Intrument Penilaian</a>
 												</li>
-												<li class="nav-item">
-													<a class="nav-link {{ Request::is('periode/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_3">Assesment</a>
+                                                <li class="nav-item">
+													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
 												</li>
-												<li class="nav-item">
+                                                @endif
+                                                @if (Auth::user()->role == 'dinas')
+                                                <li class="nav-item">
+													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
+												</li>
+                                                <li class="nav-item">
 													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_4">Validasi</a>
 												</li>
 												<li class="nav-item">
+													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
+												</li>
+                                                @endif
+                                                @if (Auth::user()->role == 'admin')
+                                                <li class="nav-item">
+													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
+												</li>
+												<li class="nav-item">
+													<a class="nav-link {{ Request::is('periode/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_3">Assesment</a>
+												</li>
+                                                <li class="nav-item">
 													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
 												</li>
                                                 <li class="nav-item">
@@ -95,6 +112,7 @@
                                                 <li class="nav-item">
 													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_7">Setting</a>
 												</li>
+                                                @endif
 											</ul>
 											<!--begin::Header tabs-->
 										</div>
@@ -203,6 +221,7 @@
 											<!--end::Menu wrapper-->
 										</div>
 										<!--end::Tab panel-->
+                                        @if (Auth::user()->role == 'pemda')
 										<!--begin::Tab panel-->
 										<div class="tab-pane fade {{ Request::is('pengisianform/*') ? 'active show' : '' }}"" id="kt_header_navs_tab_2">
 											<!--begin::Wrapper-->
@@ -215,7 +234,9 @@
 
 											<!--end::Wrapper-->
 										</div>
+                                        @endif
 										<!--end::Tab panel-->
+                                        @if (Auth::user()->role == 'admin')
 										<!--begin::Tab panel-->
                                         <div class="tab-pane fade {{ Request::is('periode/*') ? 'active show' : '' }}" id="kt_header_navs_tab_3">
 											<!--begin::Wrapper-->
@@ -226,6 +247,8 @@
 											</div>
 											<!--end::Wrapper-->
 										</div>
+
+                                        <!--end::Tab panel-->
 										<!--end::Tab panel-->
 										<!--begin::Tab panel-->
 										<div class="tab-pane fade" id="kt_header_navs_tab_4">
@@ -272,6 +295,7 @@
 											<!--end::Wrapper-->
 										</div>
 										<!--end::Tab panel-->
+                                        @endif
 									</div>
 									<!--end::Header tab content-->
 								</div>
