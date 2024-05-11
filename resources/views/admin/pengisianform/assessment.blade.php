@@ -39,7 +39,7 @@
                         </div>
 
                         <div class="col-md-8 text-end">
-                            <button type="button" class="btn btn-primary simpansoal" id="simpan">
+                            <button type="button" class="btn btn-success simpansoal" id="simpan">
                                 <span>Simpan</span>
                             </button>
                         </div>
@@ -108,7 +108,6 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script>
-
     $(document).ready(function() {
         init();
     });
@@ -315,7 +314,7 @@
                                         }
                                     });
                             }
-                        });
+                    });
 
                 });
             },

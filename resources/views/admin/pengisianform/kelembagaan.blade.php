@@ -14,6 +14,8 @@
     <div class="content flex-row-fluid" id="kt_content">
         <div class="card">
             <!--begin::Card header-->
+
+
             <div class="card-header">
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold text-gray-900">Daftar Assesment Kelembagaan</span>
@@ -21,13 +23,25 @@
                     <input type="hidden" name="periode_id" id="periode_id" value="{{$periode->id }}">
                 </h3>
             </div>
+
+
             <!--end::Card header-->
             <!--begin::Card body-->
             <div class="card-body">
                 <!--begin::Table-->
-                <div >
-
+                <div>
                     <div class="mb-3 row">
+                        <div>
+                            {{-- <div class="col-6">
+                                <a href={{url('pengisianform/lembaga')}} class="btn btn-secondary"><span>Kembali</span></a>
+
+                            </div> --}}
+                            <div class="col-12 text-end">
+                                <button type="button" class="btn btn-success simpansoal" id="simpan">
+                                    <span>Simpan</span>
+                                </button>
+                            </div>
+                        </div>
                         <div class="col-md-12">
                             <table id="kt_datatable_fixed_header" class="table table-striped table-row-bordered gy-5 gs-7">
                                 <thead>
@@ -41,6 +55,17 @@
 
                                 </tbody>
                             </table>
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href={{url('pengisianform/lembaga')}} class="btn btn-secondary"><span>Kembali</span></a>
+
+                                </div>
+                                <div class="col-6 text-end">
+                                    <button type="button" class="btn btn-success simpansoal" id="simpan">
+                                        <span>Submit</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -53,26 +78,21 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="modalUpdateLabel" aria-hidden="true">
+<div class="modal fade" id="urlinfo" tabindex="-1" aria-labelledby="modalUpdateLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" >
             <div class="modal-header">
                 <h5 class="modal-title" id="modalUpdateLabel">Update Data</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formUpdate">
-                @csrf
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="updatedData" class="form-label">Dokumen Pendukung</label>
-                        <input type="file" class="form-control" id="updatedData" name="updatedData">
-                    </div>
+                    <div id="info_url"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary submitevidence">Update</button>
                 </div>
-            </form>
+
         </div>
     </div>
 </div>
@@ -84,98 +104,114 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
+    // $(document).ready(function() {
+    //     var periode_id = $("#periode_id").val();
+    //     loadDataPertanyaan(periode_id);
+
+    //     $(document).on('click', 'input[type="radio"][name="jawaban"]', function() {
+    //     // Mendapatkan nilai yang dipilih
+    //     var selectedValue = $(this).val();
+    //     // data-id
+    //     var dataId = $(this).data('id');
+    //     var jawaban = $(this).data('jwb');
+    //     var tatanan_id = $("#pilihitatanan").val();
+
+
+    //     // Lakukan apa pun yang perlu Anda lakukan dengan nilai yang dipilih dan nomor indikator
+    //     console.log('Periode_id:', periode_id);
+    //     console.log('Jawaban yang dipilih:', jawaban);
+    //     console.log('Nilai yang dipilih:', selectedValue);
+    //     console.log('id_pertanyaan:', dataId);
+    // });
     $(document).ready(function() {
+        init();
+    });
+    function init(params) {
         var periode_id = $("#periode_id").val();
         loadDataPertanyaan(periode_id);
+    }
 
-        $(document).on('click', 'input[type="radio"][name="jawaban"]', function() {
-        // Mendapatkan nilai yang dipilih
-        var selectedValue = $(this).val();
-        // data-id
-        var dataId = $(this).data('id');
-        var jawaban = $(this).data('jwb');
-        var tatanan_id = $("#pilihitatanan").val();
+    $('body').on('click', '.tambahurl', function (e) {
+        e.preventDefault();
+        let dataTarget = e.target;
+        id = dataTarget.getAttribute('data-id')
+        url = dataTarget.getAttribute('data-url')
+        var open = '';
+        if (url != 'null') {
+            open = '<a href="/pengisianform/downloadfile/' + btoa(id) + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah file pendukung</span><br/><br/> ';
+        }
 
-
-        // Lakukan apa pun yang perlu Anda lakukan dengan nilai yang dipilih dan nomor indikator
-        console.log('Periode_id:', periode_id);
-        console.log('Jawaban yang dipilih:', jawaban);
-        console.log('Nilai yang dipilih:', selectedValue);
-        console.log('id_pertanyaan:', dataId);
+        // alert(id);
+        $('#info_url').empty();
+        $("#info_url").html("");
+        html = `
+                <input id="idevidence" type="hidden" name="id" value="`+id+`">
+                `+open+`
+                <input id="urlevidence" type="file" class="form-control" name="urlevidence">`;
+        $('#info_url').html(html);
+        $('#urlinfo').modal('show');
     });
+    $('body').on('click', '.simpansoal', function (e) {
+        e.preventDefault();
+        Swal.fire({
+                title: "Konfirmasi",
+                icon: "question",
+                text: "Apakah Anda ingin menyimpan pengisian ini? Setelah disimpan soal akan di verifikasi oleh Dinas !!!",
+                showCancelButton: true,
+                confirmButtonText: "Ya",
+                cancelButtonText: "Tidak",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    postpertanyaan();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
+                }
+            });
 
     });
-    // Mendaftarkan event listener untuk input URL
-    $('#updatedData').on('blur', function() {
-        var url = $(this).val();
-        if (!isValidUrl(url)) {
-            // swalt information
-            swal("Oops!", "Link Pendukung tidak valid", "error");
-            $(this).val('');
-            return;
+    $('body').on('click', '.submitevidence', function (e) {
+        e.preventDefault();
+
+        var fileData = new FormData();
+        fileData.append('file', $('#urlevidence')[0].files[0]);
+        fileData.append('id', $('#idevidence').val());
+        var id = $('#idevidence').val();
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+
+        if (url == '') {
+            Swal.fire({
+                title: "Perhatian!",
+                icon: "warning",
+                text: "Data tidak boleh kosong",
+            });
+        }else{
+            $.ajax({
+                url: '/pengisianform/uploadfile/',
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                data: fileData,
+                processData: false, // Tambahkan ini agar FormData tidak diproses
+                contentType: false, // Tambahkan ini agar FormData tidak diproses
+                success: function(response) {
+                    init();
+                    Swal.fire({
+                        title: "Berhasil!",
+                        icon: "success",
+                        text: "Data Berhasil di upload",
+                    });
+                    $('#urlevidence').val('');
+                    $('#urlinfo').modal('hide');
+
+                },
+                error: function(xhr, status, error) {
+                    console.log(error);
+                }
+            });
         }
     });
-
-    // Fungsi untuk memeriksa apakah URL valid
-    function isValidUrl(url) {
-        // RegEx untuk memeriksa apakah URL valid
-        var urlPattern = /^(http(s)?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- ;,./?%&=]*)?$/;
-        return urlPattern.test(url);
-    }
-
-
-    // Fungsi untuk melakukan update dengan ID tertentu
-    function upload(id, currentData) {
-        // Mengisi nilai awal pada form modal dengan data yang ada saat ini
-        $('#updatedData').val(currentData);
-
-        // Menetapkan ID data yang akan diupdate pada form modal (jika diperlukan)
-        $('#formUpdate').attr('data-item-id', id);
-
-        // Menampilkan modal update
-        $('#modalUpdate').modal('show');
-    }
-
-    // Event listener untuk menangani submit form update
-    $('#formUpdate').submit(function(e) {
-        e.preventDefault(); // Mencegah aksi default form
-
-        // Mengambil nilai yang diperbarui dari input
-        var updatedLink = $('#updatedData').val();
-
-        // Mendapatkan ID data yang akan diupdate
-        var itemId = $(this).attr('data-item-id');
-
-        // Data yang akan dikirimkan ke server dalam format objek
-        var postData = {
-            id: itemId,
-            linkPendukung: updatedLink
-        };
-        var csrfToken = $('meta[name="csrf-token"]').attr('content');
-        // Kirim data pembaruan ke server menggunakan Ajax
-        $.ajax({
-            url: '/pengisianform/updatefilelembaga/', // Ganti dengan URL endpoint yang sesuai di server Anda
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            },
-            data: postData,
-            success: function(response) {
-                swal("Update link successfully posted to server " + response. linkPendukung + ".");
-                // Tutup modal update
-                $('#modalUpdate').modal('hide');
-            },
-            error: function(xhr, status, error) {
-                // Kesalahan saat melakukan request Ajax
-                console.error('Terjadi kesalahan saat melakukan permintaan Ajax:', error);
-
-                // Tambahkan logika untuk menangani kesalahan jika diperlukan
-            }
-        });
-    });
-
-
-
     // Fungsi untuk memuat data menggunakan Ajax
     function loadDataPertanyaan(indicator) {
         $.ajax({
@@ -188,25 +224,19 @@
                 // Loop melalui data yang diterima dan tambahkan ke dalam tabel
                 $.each(response, function(index, item) {
                     // Mengubah tautan berdasarkan kondisi item.file
-                    if (item.file != null) {
-                        // Tautan untuk menampilkan file
-                        var link = '<a href="' + item.file + '" class="btn btn-sm btn-primary" target="_blank">Unduh</a>';
-                    } else {
-                        // Tautan untuk menampilkan modal upload
-                        var link = '<button type="button" class="btn btn-sm btn-primary" onclick="upload(' + item.id + ')">Upload</button>';
-                    }
-
-                    // jawaban radio button
+                    var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Upload</a>';
                     var jawaban = '';
 
                     // Periksa apakah jawaban_a ada
                     if(item.jawaban_a) {
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="jawaban" data-id="'+item.id+'" data-jwb="a" value="'+item.jawaban_a+'"> '+item.jawaban_a + '<br><br>';
+                        var checkedA = item.jawaban === 'a' ? 'checked' : '';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="a" value="'+item.nilai_a+'" ' + checkedA + ' > '+item.jawaban_a + '<br><br>';
                     }
 
                     // Periksa apakah jawaban_b ada
                     if(item.jawaban_b) {
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="jawaban" data-id="'+item.id+'" data-jwb="b" value="'+item.jawaban_b+'"> '+item.jawaban_b + '<br><br>';
+                        var checkedB = item.jawaban === 'b' ? 'checked' : '';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="b" value="'+item.nilai_b+'" ' + checkedB + '> '+item.jawaban_b + '<br><br>';
                     }
 
 
@@ -223,12 +253,46 @@
                             '<td colspan="4">' + indikator + '</td>' +
                         '</tr>' +
                         '<tr>' +
-                            // '<td>' + (index + 1) + '</td>' +
                             '<td>' + item.no_pertanyaan + '</td>' +
                             '<td>' + item.pertanyaan +'</br></br>'+jawaban+ '</td>' +
                             '<td class="text-end">' + link + '</td>' +
                         '</tr>'
                     );
+                    $("input[type='radio']").on('click', function(){
+                            var radioValue = $("input[name="+item.id+"]:checked").val();
+                            if(radioValue){
+                                var nilai = $(this).val();
+                                // data-id
+                                var dataId = $(this).data('id');
+                                var jawaban = $(this).data('jwb');
+                                var tatanan_id = $("#pilihitatanan").val();
+                                var periode_id = $("#periode_id").val();
+
+                                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                                // ajax post
+                                $.ajax({
+                                        url: "/pengisianform/pengiisiansoallembaga",
+                                        type: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        data: {
+                                            dataId: dataId,
+                                            jawaban: jawaban,
+                                            tatanan_id: tatanan_id,
+                                            periode_id: periode_id,
+                                        },
+                                        success: function(response) {
+                                        loadDataPertanyaan(periode_id);
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('Terjadi kesalahan:', error);
+                                            // Tangani kesalahan jika ada
+                                        }
+                                    });
+                            }
+                    });
                 });
             },
             error: function(xhr) {
@@ -236,6 +300,37 @@
             }
         });
     }
+    function postpertanyaan(){
+        var periode_id = $("#periode_id").val();
+        var postData = {
+                id: periode_id,
+                status : 3,
+                prosess: 0,
+            };
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                url: '/pengisianform/submitpengisian/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                data: postData,
+                success: function(response) {
+                    Swal.fire({
+                    title: "Berhasil!",
+                    icon: "success",
+                    text: "Data Berhasil disimpan",
+                        }).then(() => {
+                        // Mengarahkan ulang setelah menyimpan pengisian
+                        window.location.href = "/pengisianform/lembaga";
+                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire("Gagal", "Pengisian tidak disimpan.", "error");
+                }
+            });
+    }
+
 
 </script>
 @endsection

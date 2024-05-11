@@ -146,6 +146,11 @@ class PengisianFormController extends Controller
         try {
             $id = $request->id;
             $status = $request->status;
+            if ($request->prosess == 0) {
+                $data = Periode::where('id', $id)->update([
+                    'status_lembaga' => $status
+                 ]);
+            }
             $data = Periode::where('id', $id)->update([
                'status' => $status
             ]);
