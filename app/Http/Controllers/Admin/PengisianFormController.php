@@ -10,11 +10,26 @@ use App\Models\TRXPertanyaanModel as TrxPertanyaan;
 use App\Models\TrxPertanyaanKelembagaanModel as TrxPertanyaanLembaga;
 use App\Models\TrxKelembagaanModel as TrxKelembagaan;
 use App\Models\IndikatorModel as Indikator;
+use App\Models\User;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PengisianFormController extends Controller
 {
+    // start
+    public function start(Request $request)
+    {
+        if ($request->prosess == 'tatanan') {
+            $data = User::where('id', '=', Auth::user()->id)->update([
+                    'status_pengisian' => 'Pengisian',
+                    ]);
+        }else{
+            $data = User::where('id', '=', Auth::user()->id)->update([
+                    'status_pengisian_lembaga' => 'Pengisian',
+                    ]);
+        }
+        return response()->json($data);
+    }
     public function periode_tatanan()
     {
         $data = Periode::orderBy('id', 'DESC')->get();
@@ -146,14 +161,16 @@ class PengisianFormController extends Controller
         try {
             $id = $request->id;
             $status = $request->status;
-            if ($request->prosess == 0) {
-                $data = Periode::where('id', $id)->update([
-                    'status_lembaga' => $status
-                 ]);
+            if ($request->prosess == 'tatanan') {
+                $data = User::where('id', '=', Auth::user()->id)->update([
+                    'status_pengisian' => 'Verifikasi',
+                ]);
+            }else{
+                $data = User::where('id', '=', Auth::user()->id)->update([
+                    'status_pengisian_lembaga' => 'Verifikasi',
+                ]);
             }
-            $data = Periode::where('id', $id)->update([
-               'status' => $status
-            ]);
+
             return response()->json($data);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);

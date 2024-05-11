@@ -99,6 +99,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/pengiisiansoallembaga', [PengisianFormController::class,'pengisianSoallembaga'])->name('pengisianform.pengisianSoallembaga');
         Route::post('/submitpengisian', [PengisianFormController::class,'submitpengisian'])->name('pengisianform.submitpengisian');
         Route::post('/uploadfile', [PengisianFormController::class, 'uploadfile'])->name('pengisianform.uploadfile');
+        Route::post('/start', [PengisianFormController::class, 'start'])->name('pengisianform.start');
         Route::get('/downloadfile/{id}', [PengisianFormController::class, 'downloadfile']);
 
 

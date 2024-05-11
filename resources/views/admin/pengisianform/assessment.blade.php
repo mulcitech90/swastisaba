@@ -39,6 +39,8 @@
                         </div>
 
                         <div class="col-md-8 text-end">
+                            <a href={{url('pengisianform/tatanan')}} class="btn btn-secondary"><span>Kembali</span></a>
+
                             <button type="button" class="btn btn-success simpansoal" id="simpan">
                                 <span>Simpan</span>
                             </button>
@@ -411,7 +413,8 @@
         var periode_id = $("#periode_id").val();
         var postData = {
                 id: periode_id,
-                status : 3
+                status : 3,
+                prosess : 'tatanan',
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({

@@ -47,15 +47,15 @@
                                 <td class="text-center">{{CountSoal($item->id, 'jumlahsoal')}}</td>
                                 {{-- <td class="text-center">{{CountSoal($item->id, 'jumlahterjawab')}}</td> --}}
                                 <td class="text-center">
-                                    @if ($item->status == 1)
-                                       <span class="badge badge-primary ">Terbuka</span>
-                                    @elseif ($item->status == 2)
+                                    @if (statuspengisian(Auth::user()->id) == 'Open')
+                                       <span class="badge badge-primary ">Open</span>
+                                    @elseif (statuspengisian(Auth::user()->id) == 'Pengisian')
                                        <span class="badge badge-secondary ">Pengisian</span>
-                                    @elseif ($item->status == 3)
+                                    @elseif (statuspengisian(Auth::user()->id) == 'Verifikasi')
                                        <span class="badge badge-info ">Verifikasi</span>
-                                    @elseif ($item->status == 4)
+                                    @elseif (statuspengisian(Auth::user()->id) == 'Revisi')
                                        <span class="badge badge-warning ">Revisi</span>
-                                    @elseif ($item->status == 5)
+                                    @elseif (statuspengisian(Auth::user()->id) == 'Selesai')
                                        <span class="badge badge-success ">Selesai</span>
                                     @endif
                                 </td>
@@ -93,21 +93,44 @@
 <script>
 
     function Pengisian(periodeId) {
-        swal({
-            title: "Apakah Anda yakin?",
-            text: "Anda yakin akan melanjutkan instrumen pengisian ?",
-            icon: "warning",
-            buttons: {
-                cancel: "Batal",
-                confirm: "Ya, Lanjutkan"
-            }
-        })
-        .then((data) => {
-            if (data) {
-                window.location.href = "/pengisianform/assessment/" + btoa(periodeId);
-                swal("Poof! Your imaginary file has been deleted!", {
-                    icon: "success",
+        Swal.fire({
+            title: "Konfirmasi",
+            icon: "question",
+            text: "Anda yakin akan melanjutkan untuk instrumen pengisian ?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var postData = {
+                    prosess: "tatanan",
+                }
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: '/pengisianform/start/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: postData,
+                    success: function(response) {
+                        init();
+                        Swal.fire({
+                            title: "Berhasil!",
+                            icon: "success",
+                            text: "Data Berhasil di upload",
+                        });               // Tutup modal update
+                        init();
+                        $('#urlevidence').val('');
+                        $('#urlinfo').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
                 });
+                window.location.href = "/pengisianform/assessment/" + btoa(periodeId);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
             }
         });
     }

@@ -37,6 +37,7 @@
 
                             </div> --}}
                             <div class="col-12 text-end">
+                                <a href={{url('pengisianform/lembaga')}} class="btn btn-secondary"><span>Kembali</span></a>
                                 <button type="button" class="btn btn-success simpansoal" id="simpan">
                                     <span>Simpan</span>
                                 </button>
@@ -104,25 +105,6 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 
-    // $(document).ready(function() {
-    //     var periode_id = $("#periode_id").val();
-    //     loadDataPertanyaan(periode_id);
-
-    //     $(document).on('click', 'input[type="radio"][name="jawaban"]', function() {
-    //     // Mendapatkan nilai yang dipilih
-    //     var selectedValue = $(this).val();
-    //     // data-id
-    //     var dataId = $(this).data('id');
-    //     var jawaban = $(this).data('jwb');
-    //     var tatanan_id = $("#pilihitatanan").val();
-
-
-    //     // Lakukan apa pun yang perlu Anda lakukan dengan nilai yang dipilih dan nomor indikator
-    //     console.log('Periode_id:', periode_id);
-    //     console.log('Jawaban yang dipilih:', jawaban);
-    //     console.log('Nilai yang dipilih:', selectedValue);
-    //     console.log('id_pertanyaan:', dataId);
-    // });
     $(document).ready(function() {
         init();
     });
@@ -305,7 +287,7 @@
         var postData = {
                 id: periode_id,
                 status : 3,
-                prosess: 0,
+                prosess: 'lembaga',
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({

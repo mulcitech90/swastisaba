@@ -44,16 +44,16 @@
                                 <td>{{ $item->periode }}</td>
                                 <td class="text-center">{{CountSoalLembaga($item->id, 'hitungsoal')}}</td>
                                 <td class="text-center">
-                                    @if ($item->status_lembaga == 1)
-                                       <span class="badge badge-primary ">Terbuka</span>
-                                    @elseif ($item->status_lembaga == 2)
-                                       <span class="badge badge-secondary ">Pengisian</span>
-                                    @elseif ($item->status_lembaga == 3)
-                                       <span class="badge badge-info ">Verifikasi</span>
-                                    @elseif ($item->sstatus_lembagatatus == 4)
-                                       <span class="badge badge-warning ">Revisi</span>
-                                    @elseif ($item->status_lembaga == 5)
-                                       <span class="badge badge-success ">Selesai</span>
+                                    @if (statuspengisianlembaga(Auth::user()->id) == 'Open')
+                                        <span class="badge badge-primary ">Open</span>
+                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Pengisian')
+                                        <span class="badge badge-secondary ">Pengisian</span>
+                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Verifikasi')
+                                        <span class="badge badge-info ">Verifikasi</span>
+                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Revisi')
+                                        <span class="badge badge-warning ">Revisi</span>
+                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Selesai')
+                                        <span class="badge badge-success ">Selesai</span>
                                     @endif
                                 </td>
 
@@ -89,22 +89,46 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script>
 
+
     function Pengisian(periodeId) {
-        swal({
-            title: "Apakah Anda yakin?",
-            text: "Anda yakin akan melanjutkan instrumen pengisian ?",
-            icon: "warning",
-            buttons: {
-                cancel: "Batal",
-                confirm: "Ya, Lanjutkan"
-            }
-        })
-        .then((data) => {
-            if (data) {
-                window.location.href = "/pengisianform/kelembagaan/" + btoa(periodeId);
-                swal("Poof! Your imaginary file has been deleted!", {
-                    icon: "success",
+        Swal.fire({
+            title: "Konfirmasi",
+            icon: "question",
+            text: "Anda yakin akan melanjutkan untuk instrumen pengisian kelembagaan ?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: "Tidak",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var postData = {
+                    prosess: "lembaga",
+                }
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: '/pengisianform/start/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    data: postData,
+                    success: function(response) {
+                        init();
+                        Swal.fire({
+                            title: "Berhasil!",
+                            icon: "success",
+                            text: "Data Berhasil di upload",
+                        });               // Tutup modal update
+                        init();
+                        $('#urlevidence').val('');
+                        $('#urlinfo').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(error);
+                    }
                 });
+                window.location.href = "/pengisianform/kelembagaan/" + btoa(periodeId);
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
             }
         });
     }

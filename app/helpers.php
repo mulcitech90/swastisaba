@@ -77,4 +77,28 @@ if (!function_exists('CountSoalLembaga')) {
         return $result;
     }
 }
+if (!function_exists('statuspengisian')) {
+    function statuspengisian($id) {
+            $data = DB::table('users')->where('id', $id)->pluck('status_pengisian')->first();
+            if (!$data) {
+                $result = '-';
+            }else {
+                $result = $data;
+            }
+
+        return $result;
+    }
+}
+if (!function_exists('statuspengisianlembaga')) {
+    function statuspengisianlembaga($id) {
+            $data = DB::table('users')->where('id', $id)->pluck('status_pengisian_lembaga')->first();
+            if (!$data) {
+                $result = '-';
+            }else {
+                $result = $data;
+            }
+
+        return $result;
+    }
+}
 ?>
