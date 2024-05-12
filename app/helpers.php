@@ -101,4 +101,28 @@ if (!function_exists('statuspengisianlembaga')) {
         return $result;
     }
 }
+if (!function_exists('validatorperiode')) {
+    function validatorperiode($id, $tag) {
+            if ($tag == 'periode') {
+                $data = DB::table('trx_pertanyaan')->where('user_id', $id)->select('id_periode')->first();
+                $periode = DB::table('periode')->where('id', $data->id_periode)->first();
+                $result = $periode ? $periode->periode : '-';
+            }elseif ($tag == 'jumlahtatanan') {
+                $data = DB::table('trx_pertanyaan')->where('user_id', $id)->select('id_periode')->first();
+                $periode = DB::table('trx_tatanan')->where('id_periode', $data->id_periode)->count();
+                $result = $periode ? $periode : 0;
+            }elseif ($tag == 'persentase') {
+                $result = '0%';
+            }
+
+
+        return $result;
+    }
+}
+if (!function_exists('pemda')) {
+    function pemda($id) {
+        $result = DB::table('users')->where('id', $id)->select('name')->first();
+        return $result->name;
+    }
+}
 ?>

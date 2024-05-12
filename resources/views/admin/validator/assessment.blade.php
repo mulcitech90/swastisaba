@@ -17,9 +17,11 @@
             <!--begin::Card header-->
             <div class="card-header">
                 <h3 class="card-title align-items-start flex-column">
-                    <span class="card-label fw-bold text-gray-900">Daftar Periode dan Instrumen Penilaian</span>
+                    <span class="card-label fw-bold text-gray-900">Daftar Periode dan Instrumen Penilaian ({{pemda($id_check)}})</span>
                     <span class="text-muted mt-1 fw-semibold fs-7">{{$periode ? $periode->periode : '-' }}</span>
                     <input type="hidden" name="periode_id" id="periode_id" value="{{$periode->id }}">
+                    <input type="hidden" name="user_id" id="user_id" value="{{$id_check}}">
+
                 </h3>
             </div>
             <!--end::Card header-->
@@ -39,7 +41,7 @@
                         </div>
 
                         <div class="col-md-8 text-end">
-                            <a href={{url('pengisianform/tatanan')}} class="btn btn-secondary"><span>Kembali</span></a>
+                            <a href={{url('validator')}} class="btn btn-secondary"><span>Kembali</span></a>
 
                             <button type="button" class="btn btn-success simpansoal" id="simpan">
                                 <span>Simpan</span>
@@ -53,7 +55,11 @@
                                     <tr class="fw-semibold fs-6 text-gray-800">
                                         <th>No</th>
                                         <th class="text-left">Pertanyaan</th>
-                                        <th class="text-end">Link Data Pendukung</th>
+                                        <th class="text-center">Nilai Self Assesment</th>
+                                        <th class="text-center">Link Data Pendukung</th>
+                                        <th class="text-center">Justifikasi</th>
+                                        <th class="text-center">Penilaian</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -114,9 +120,10 @@
         init();
     });
     function init(params) {
+        var user_id = $('#user_id').val();
         var pilihitatanan = $("#pilihitatanan").val();
         var periode = $("#periode_id").val();
-        loadDataPertanyaan(pilihitatanan, periode);
+        loadDataPertanyaan(pilihitatanan, periode, user_id);
     }
 
     $('body').on('click', '.tambahurl', function (e) {
@@ -180,14 +187,15 @@
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                url: '/pengisianform/updatelink', // Ganti dengan URL endpoint yang sesuai di server Anda
+                url: '/validator/updatelink/', // Ganti dengan URL endpoint yang sesuai di server Anda
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
                 },
                 data: postData,
                 success: function(response) {
-                    // init();
+                    init();
+
                     Swal.fire({
                         title: "Berhasil!",
                         icon: "success",
@@ -218,13 +226,15 @@
     $("#pilihitatanan").change(function() {
         var selectedIndicator = $(this).val();
         var periode = $("#periode_id").val();
-        loadDataPertanyaan(selectedIndicator, periode);
+        var user_id = $('#user_id').val();
+        loadDataPertanyaan(selectedIndicator, periode, user_id);
     });
 
     // Fungsi untuk memuat data menggunakan Ajax
-    function loadDataPertanyaan(indicator, periode) {
+    function loadDataPertanyaan(indicator, periode, user_id) {
+        var url = "/validator/pertanyaanlist/" + indicator + "?periode=" + periode + "&user=" + user_id;
         $.ajax({
-            url: "/pengisianform/pertanyaanlist/"+indicator+"?periode="+periode+"",
+            url: url,
             type: "GET",
             success: function(response) {
                 // Bersihkan isi tabel
@@ -233,8 +243,16 @@
                 // Loop melalui data yang diterima dan tambahkan ke dalam tabel
                 $.each(response, function(index, item) {
 
-                    var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Link</a>';
+                    if (item.file != null) {
+                        var link = '<a href="'+item.file+'" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Lampiran</a>';
+                    }else{
+                        var link = '<a href="javascript:void(0)" class="btn btn-danger btn-sm waves-effect waves-float waves-light">Tidak terlampir</a>';
+                    }
+
                     var jawaban = '';
+                    var penilaian = '';
+                    var justify = '';
+
 
                     // Periksa apakah jawaban_a ada
                     if(item.jawaban_a) {
@@ -262,8 +280,30 @@
                         jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="d" value="'+item.nilai_d+'" ' + checkedD + '> '+item.jawaban_d + '<br><br>';
                     }
 
+                    penilaian += `<div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" value="" id="flexRadioDefault"/>
+                                    <label class="form-check-label" for="flexRadioDefault">
+                                        Ditolak
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="form-check form-check-custom form-check-solid">
+                                    <input class="form-check-input" type="radio" value="" id="flexRadioChecked" checked="checked" />
+                                    <label class="form-check-label" for="flexRadioChecked">
+                                        Disetujui
+                                    </label>
+                                </div>`;
+                    justify += `<div >
+                                    <textarea class="form-control"  id="floatingTextarea2" style="height: 50px"></textarea>
+                                </div>`;
 
                     var indikator = '';
+                    var nilaix = 'Belum Disi';
+                    if (item.nilai == null) {
+                        nilaix = 'Belum Disi';
+                    }else{
+                        nilaix = item.nilai;
+                    }
 
                     // Periksa apakah indikator ada
                     $.each(item.indikator, function(index, item) {
@@ -273,13 +313,19 @@
                     // Tambahkan data ke dalam tabel
                     $('#kt_datatable_fixed_header tbody').append(
                         '<tr>' +
-                            '<td colspan="4">' + indikator + '</td>' +
+                            '<td colspan="6">' + indikator + '</td>' +
                         '</tr>' +
                         '<tr>' +
                             // '<td>' + (index + 1) + '</td>' +
                             '<td>' + item.no_pertanyaan + '</td>' +
                             '<td>' + item.pertanyaan +'</br></br>'+jawaban+ '</td>' +
-                            '<td class="text-end">' + link + '</td>' +
+                            '<td>  <span class="badge badge-primary ">' + nilaix +'</span></td>' +
+
+                            '<td class="text-center">' + link + '</td>' +
+                            '<td class="text-center">'+justify+'</td>' +
+                            '<td>'+penilaian+'</td>' +
+
+
                         '</tr>'
                     );
                     $("input[type='radio']").on('click', function(){
@@ -296,7 +342,7 @@
 
                                 // ajax post
                                 $.ajax({
-                                        url: "/pengisianform/pengiisiansoal",
+                                        url: "/validator/pengiisiansoal",
                                         type: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': csrfToken
@@ -309,7 +355,8 @@
                                             nilai:nilai
                                         },
                                         success: function(response) {
-                                        loadDataPertanyaan(tatanan_id, periode_id);
+                                            var user_id = $('#user_id').val();
+                                        loadDataPertanyaan(tatanan_id, periode_id, user_id);
                                         },
                                         error: function(xhr, status, error) {
                                             console.error('Terjadi kesalahan:', error);
@@ -419,7 +466,7 @@
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                url: '/pengisianform/submitpengisian/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                url: '/validator/submitpengisian/', // Ganti dengan URL endpoint yang sesuai di server Anda
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
@@ -432,7 +479,7 @@
                     text: "Data Berhasil disimpan",
                         }).then(() => {
                         // Mengarahkan ulang setelah menyimpan pengisian
-                        window.location.href = "/pengisianform/tatanan";
+                        window.location.href = "/validator/tatanan";
                     });
                 },
                 error: function(xhr, status, error) {

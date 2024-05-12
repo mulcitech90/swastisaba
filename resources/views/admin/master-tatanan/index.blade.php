@@ -86,7 +86,7 @@
                     </div>
                     <!-- Tambahkan input select2 multiple -->
                     <div class="mb-3">
-                        <label for="pilihanTatanan" class="form-label">Pilihan Tatanan</label>
+                        <label for="pilihanTatanan" class="form-label">Pilihan Indikator</label>
                         <select class="form-control" id="pilihanTatanan" name="pilihanTatanan[]" multiple>
                             @foreach ($indikator as $item)
                             <option value="{{$item->id}}">{{$item->nama_indikator}}</option>
@@ -124,7 +124,7 @@
                     </div>
                     <!-- Tambahkan input select2 multiple -->
                     <div class="mb-3">
-                        <label for="editPilihanTatanan" class="form-label">Pilihan Tatanan</label>
+                        <label for="editPilihanTatanan" class="form-label">Pilihan Indikator</label>
                         <select class="form-control" id="editPilihanTatanan" name="editPilihanTatanan[]" multiple>
 
                         </select>

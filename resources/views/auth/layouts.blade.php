@@ -76,7 +76,7 @@
 											<ul class="nav flex-nowrap text-nowrap">
 												@if (Auth::user()->role == 'pemda')
                                                 <li class="nav-item">
-													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
+													<a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
 												</li>
 												<li class="nav-item">
 													<a class="nav-link {{ Request::is('pengisianform/*') ? 'active' : '' }}""  data-bs-toggle="tab" href="#kt_header_navs_tab_2">Intrument Penilaian</a>
@@ -87,10 +87,10 @@
                                                 @endif
                                                 @if (Auth::user()->role == 'dinas')
                                                 <li class="nav-item">
-													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
+													<a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
 												</li>
                                                 <li class="nav-item">
-													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_4">Validasi</a>
+													<a class="nav-link {{ Request::is('validator') || Request::is('validator/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_4">Validasi</a>
 												</li>
 												<li class="nav-item">
 													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
@@ -98,7 +98,7 @@
                                                 @endif
                                                 @if (Auth::user()->role == 'admin')
                                                 <li class="nav-item">
-													<a class="nav-link " data-bs-toggle="tab" href="#kt_header_navs_tab_1">Dashboard</a>
+													<a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
 												</li>
 												<li class="nav-item">
 													<a class="nav-link {{ Request::is('periode/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_3">Assesment</a>
@@ -131,7 +131,7 @@
 											<!--begin::Name-->
 											<div class="d-none d-md-flex flex-column align-items-end justify-content-center me-2 me-md-4">
 												<span class="text-white opacity-75 fs-8 fw-semibold lh-1 mb-1"> {{ Auth::user()->name }}</span>
-												<span class="text-white fs-8 fw-bold lh-1">Administator</span>
+												<span class="text-white fs-8 fw-bold lh-1">{{ Auth::user()->role }}</span>
 											</div>
 											<!--end::Name-->
 											<!--begin::Symbol-->
@@ -155,26 +155,13 @@
 													<!--begin::Username-->
 													<div class="d-flex flex-column">
 														<div class="fw-bold d-flex align-items-center fs-5 ms-2">{{ Auth::user()->name }}</div>
-                                                        <a href="#" class="fw-semibold text-muted text-hover-primary fs-7 ms-2">Administator</a>
+                                                        <a href="#" class="fw-semibold text-muted text-hover-primary fs-7 ms-2">{{ Auth::user()->role }}</a>
 													</div>
 
 												</div>
 											</div>
 											<!--end::Menu item-->
                                             <div class="separator my-2"></div>
-                                                    <!--end::Menu separator-->
-                                                    <!--begin::Menu item-->
-                                                    <div class="menu-item px-5">
-                                                        <a href="account/overview.html" class="menu-link px-5">Profile</a>
-                                                    </div>
-                                                    <!--end::Menu item-->
-                                                    <!--begin::Menu item-->
-                                                    <div class="menu-item px-5">
-                                                        <a href="apps/projects/list.html" class="menu-link px-5">
-                                                            <span class="menu-text">Password</span>
-                                                        </a>
-                                                    </div>
-                                                    <!--end::Menu item-->
 
 											<!--begin::Menu item-->
 											<div class="menu-item px-5">
@@ -236,6 +223,37 @@
 										</div>
                                         @endif
 										<!--end::Tab panel-->
+                                        @if (Auth::user()->role == 'dinas')
+										<div class="tab-pane fade {{ Request::is('validator/*') || Request::is('validator') ? 'active show' : '' }}" id="kt_header_navs_tab_4">
+											<!--begin::Wrapper-->
+											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
+                                                <div class="d-flex flex-column flex-lg-row gap-2">
+													<a class="btn btn-sm btn-light-primary fw-bold"  href="{{ route('validator.periode') }}">Periode</a>
+                                                </div>
+											</div>
+											<!--end::Wrapper-->
+										</div>
+										<!--end::Tab panel-->
+										<!--begin::Tab panel-->
+										<div class="tab-pane fade" id="kt_header_navs_tab_5">
+											<!--begin::Wrapper-->
+											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
+
+											</div>
+											<!--end::Wrapper-->
+										</div>
+										<!--end::Tab panel-->
+
+                                        <!--begin::Tab panel-->
+										<div class="tab-pane fade" id="kt_header_navs_tab_7">
+											<!--begin::Wrapper-->
+											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
+
+											</div>
+											<!--end::Wrapper-->
+										</div>
+										<!--end::Tab panel-->
+                                        @endif
                                         @if (Auth::user()->role == 'admin')
 										<!--begin::Tab panel-->
                                         <div class="tab-pane fade {{ Request::is('periode/*') ? 'active show' : '' }}" id="kt_header_navs_tab_3">
@@ -251,10 +269,12 @@
                                         <!--end::Tab panel-->
 										<!--end::Tab panel-->
 										<!--begin::Tab panel-->
-										<div class="tab-pane fade" id="kt_header_navs_tab_4">
+										<div class="tab-pane fade {{ Request::is('validasi/*') ? 'active show' : '' }}" id="kt_header_navs_tab_4">
 											<!--begin::Wrapper-->
 											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
-
+                                                <div class="d-flex flex-column flex-lg-row gap-2">
+													<a class="btn btn-sm btn-light-primary fw-bold"  href="{{ route('validator.periode') }}">Periode</a>
+                                                </div>
 											</div>
 											<!--end::Wrapper-->
 										</div>

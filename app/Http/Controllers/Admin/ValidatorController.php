@@ -14,8 +14,20 @@ use App\Models\User;
 use Auth;
 use Illuminate\Support\Facades\Storage;
 
-class PengisianFormController extends Controller
+class ValidatorController extends Controller
 {
+    public function validator_periode(Request $request)
+    {
+        $periode = Periode::all();
+        return view('admin.validator.tatanan',compact('periode'));
+    }
+    // pemda_list
+    function pemda_list($periode){
+        $uniqueUserIds = TrxPertanyaan::distinct()->where('id_periode',$periode)->pluck('user_id');
+        $result = User::whereIn('id',$uniqueUserIds)->get();
+        return response()->json($result);
+    }
+
     // start
     public function start(Request $request)
     {
@@ -33,18 +45,20 @@ class PengisianFormController extends Controller
     public function periode_tatanan()
     {
         $data = Periode::orderBy('id', 'DESC')->get();
-        return view('admin.pengisianform.tatanan',compact('data'));
+        return view('admin.validator.tatanan',compact('data'));
     }
     public function periode_lembaga()
     {
         $data = Periode::orderBy('id', 'DESC')->get();
-        return view('admin.pengisianform.lembaga',compact('data'));
+        return view('admin.validator.lembaga',compact('data'));
     }
     public function pertanyaanlist(Request $request, $id)
     {
         $result = TrxPertanyaan::where('tatanan_id', $id)->where('id_periode', $request->periode)
-        ->where('user_id', Auth::user()->id)
+        ->where('dinas_id', Auth::user()->id_dinas)
+        ->where('user_id', $request->user)
         ->get();
+
         foreach ($result as $key => $ta) {
             $id = $ta->indikator_id;
             $result[$key]->indikator = Indikator::where('id', $id)->pluck('nama_indikator');
@@ -63,14 +77,16 @@ class PengisianFormController extends Controller
         }
         return response()->json($result);
     }
-    public function assessment($id)
+    public function assessment(Request $request, $id)
     {
         $id_ = (base64_decode($id));
-        $periode = Periode::where('id', $id_)->first();
-        $tatanan = TrxTatanan::where('id_periode', $id_)->get();
+        $id_check = $id_;
+        $periode = (base64_decode($request->pr));
+        $periode = Periode::where('id',$periode)->first();
+        $tatanan = TrxTatanan::where('id_periode', $periode->id)->get();
         $indikator = Indikator::all();
 
-        return view('admin.pengisianform.assessment', compact('periode', 'tatanan', 'indikator'));
+        return view('admin.validator.assessment', compact('periode', 'tatanan', 'indikator', 'id_check'));
     }
     public function kelembagaan($id)
     {
@@ -78,7 +94,7 @@ class PengisianFormController extends Controller
         $periode = Periode::where('id', $id_)->first();
         $lembaga = TrxKelembagaan::where('id_periode', $id_)->get();
 
-        return view('admin.pengisianform.kelembagaan', compact('periode', 'lembaga'));
+        return view('admin.validator.kelembagaan', compact('periode', 'lembaga'));
     }
 
     public function updatelink(Request $request)
@@ -156,7 +172,7 @@ class PengisianFormController extends Controller
     }
 
     // pengisianSoallembaga
-    // PengisianFormController
+    // validatorController
     public function submitpengisian(Request $request){
         try {
             $id = $request->id;
