@@ -169,7 +169,7 @@
             });
         }else{
             $.ajax({
-                url: '/pengisianform/uploadfile/',
+                url: '/pengisianform/uploadfile',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
@@ -291,7 +291,7 @@
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                url: '/pengisianform/submitpengisian/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                url: '/pengisianform/submitpengisian', // Ganti dengan URL endpoint yang sesuai di server Anda
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken

@@ -107,7 +107,7 @@
                 }
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
                 $.ajax({
-                    url: '/pengisianform/start/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                    url: '/pengisianform/start', // Ganti dengan URL endpoint yang sesuai di server Anda
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken

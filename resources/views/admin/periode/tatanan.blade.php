@@ -203,9 +203,9 @@
 
     function updateStatus(periodeId, isChecked) {
         // Tampilkan konfirmasi dengan SweetAlert
-        swal({
+        Swal.fire({
             title: "Konfirmasi",
-            text: "Apakah Anda yakin akan merubah periode ini?",
+            text: "Apakah Anda yakin akan merubah status periode ini?",
             icon: "warning",
             buttons: {
                 cancel: "Batal",
@@ -246,9 +246,9 @@
     }
     function updateStatusLembaga(periodeId, isChecked) {
         // Tampilkan konfirmasi dengan SweetAlert
-        swal({
+        Swal.fire({
             title: "Konfirmasi",
-            text: "Apakah Anda yakin akan merubah Assement Kelembagaan ini?",
+            text: "Apakah Anda yakin akan merubahs status Assement Kelembagaan ini?",
             icon: "warning",
             buttons: {
                 cancel: "Batal",

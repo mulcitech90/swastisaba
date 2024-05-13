@@ -466,7 +466,7 @@
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
-                url: '/validator/submitpengisian/', // Ganti dengan URL endpoint yang sesuai di server Anda
+                url: '/validator/submitpengisian', // Ganti dengan URL endpoint yang sesuai di server Anda
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken

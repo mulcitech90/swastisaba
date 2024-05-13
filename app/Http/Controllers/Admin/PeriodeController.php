@@ -12,6 +12,7 @@ use App\Models\TrxKelembagaanModel as TrxLembaga;
 use App\Models\PertanyaanKelembagaanModel as PertanyaanLembaga;
 use App\Models\TrxPertanyaanKelembagaanModel as TrxPertanyaanLembaga;
 use App\Models\User;
+use DB;
 
 class PeriodeController extends Controller
 {
@@ -23,7 +24,7 @@ class PeriodeController extends Controller
     // periode_store
     public function periode_store(Request $request)
     {
-        try {
+        // try {
             $this->validate($request, [
                 'start' =>'required',
                 'end' =>'required',
@@ -46,62 +47,78 @@ class PeriodeController extends Controller
             $periode->status = 0;
             $periode->save();
 
+            if ($periode->id) {
+                //  get all user pemda in database
+                $data_tatanan = TatananModel::all();
+                $data_pertanyaan = PertanyaanModel::all();
+                $data_user = User::where('role', 'pemda')->get();
+                // insert to tabel trx_tatanan dan trx_pertanyaan
+
+                $checktatanan = TrxTatanan::where('id_periode', $request->periode_id)->first();
+                if (!$checktatanan) {
+                    foreach ($data_tatanan as $key => $value) {
+                        $tatanan = new TrxTatanan();
+                        $tatanan->id_periode = $request->periode_id;
+                        $tatanan->id_model = '1';
+                        $tatanan->id_tatanan = $value->id;
+                        $tatanan->nama_tatanan = $value->nama_tatanan;
+                        $tatanan->id_indikator = $value->id_indikator;
+                        $tatanan->save();
+                    }
+                }
+                $checkpertanyaan = TrxPertanyaan::where('id_periode', $request->periode_id)->first();
+                if (!$checkpertanyaan) {
+                    foreach ($data_user as $user) {
+                        $data = [
+                            'id_periode' => $periode->id,
+                            'tahun_periode' => $periode->periode,
+                            'id_user' => $user->id,
+                        ];
+
+                        // Insert data ke dalam tabel trx_main dan mendapatkan ID yang baru saja diinsert
+                        $mainId = DB::table('trx_main')->insertGetId($data);
+
+                        foreach ($data_pertanyaan as $pertanyaan) {
+                            $pertanyaanTatanan = new TrxPertanyaan();
+                            $pertanyaanTatanan->id_periode = $periode->id;
+                            $pertanyaanTatanan->id_pertanyaan_asal = $pertanyaan->id;
+                            $pertanyaanTatanan->no_pertanyaan = $pertanyaan->no_pertanyaan;
+                            $pertanyaanTatanan->pertanyaan = $pertanyaan->pertanyaan;
+                            $pertanyaanTatanan->jawaban_a = $pertanyaan->jawaban_a;
+                            $pertanyaanTatanan->jawaban_b = $pertanyaan->jawaban_b;
+                            $pertanyaanTatanan->jawaban_c = $pertanyaan->jawaban_c;
+                            $pertanyaanTatanan->jawaban_d = $pertanyaan->jawaban_d;
+                            $pertanyaanTatanan->nilai_a = $pertanyaan->nilai_a;
+                            $pertanyaanTatanan->nilai_b = $pertanyaan->nilai_b;
+                            $pertanyaanTatanan->nilai_c = $pertanyaan->nilai_c;
+                            $pertanyaanTatanan->nilai_d = $pertanyaan->nilai_d;
+                            $pertanyaanTatanan->kat = $pertanyaan->kat;
+                            $pertanyaanTatanan->dinas_id = $pertanyaan->dinas_id;
+                            $pertanyaanTatanan->tatanan_id = $pertanyaan->tatanan_id;
+                            $pertanyaanTatanan->indikator_id = $pertanyaan->indikator_id;
+                            $pertanyaanTatanan->user_id = $user->id;
+                            $pertanyaanTatanan->id_main = $mainId;
+
+                            $pertanyaanTatanan->save();
+                        }
+                    }
+
+                }
+            }
+
             return json_encode([
                 'error' => false,
                'message' => 'Data berhasil ditambahkan'
             ]);
-        } catch (\Throwable $th) {
-            return json_encode([
-                'error' => true,
-               'message' => $th->getMessage()
-            ]);
-        }
+        // } catch (\Throwable $th) {
+        //     return json_encode([
+        //         'error' => true,
+        //        'message' => $th->getMessage()
+        //     ]);
+        // }
     }
     public function updateStatus(Request $request)
     {
-        $data_tatanan = TatananModel::all();
-        $data_pertanyaan = PertanyaanModel::all();
-        $data_user = User::where('role', 'pemda')->get();
-        // insert to tabel trx_tatanan dan trx_pertanyaan
-
-        $checktatanan = TrxTatanan::where('id_periode', $request->periode_id)->first();
-        if (!$checktatanan) {
-            foreach ($data_tatanan as $key => $value) {
-                $tatanan = new TrxTatanan();
-                $tatanan->id_periode = $request->periode_id;
-                $tatanan->id_model = '1';
-                $tatanan->id_tatanan = $value->id;
-                $tatanan->nama_tatanan = $value->nama_tatanan;
-                $tatanan->id_indikator = $value->id_indikator;
-                $tatanan->save();
-            }
-        }
-        $checkpertanyaan = TrxPertanyaan::where('id_periode', $request->periode_id)->first();
-        if (!$checkpertanyaan) {
-            foreach ($data_user as $y => $e) {
-                foreach ($data_pertanyaan as $key => $value) {
-                    $pertanyaanTatanan = new TrxPertanyaan;
-                    $pertanyaanTatanan->id_periode = $request->periode_id;
-                    $pertanyaanTatanan->id_pertanyaan_asal = $value->id;
-                    $pertanyaanTatanan->no_pertanyaan = $value->no_pertanyaan;
-                    $pertanyaanTatanan->pertanyaan = $value->pertanyaan;
-                    $pertanyaanTatanan->jawaban_a = $value->jawaban_a;
-                    $pertanyaanTatanan->jawaban_b = $value->jawaban_b;
-                    $pertanyaanTatanan->jawaban_c = $value->jawaban_c;
-                    $pertanyaanTatanan->jawaban_d = $value->jawaban_d;
-                    $pertanyaanTatanan->nilai_a = $value->nilai_a;
-                    $pertanyaanTatanan->nilai_b = $value->nilai_b;
-                    $pertanyaanTatanan->nilai_c = $value->nilai_c;
-                    $pertanyaanTatanan->nilai_d = $value->nilai_d;
-                    $pertanyaanTatanan->kat = $value->kat;
-                    $pertanyaanTatanan->dinas_id = $value->dinas_id;
-                    $pertanyaanTatanan->tatanan_id = $value->tatanan_id;
-                    $pertanyaanTatanan->indikator_id = $value->indikator_id;
-                    $pertanyaanTatanan->user_id = $e->id;
-                    $pertanyaanTatanan->save();
-                }
-            }
-        }
         $periodeId = $request->periode_id;
         $isChecked = $request->is_checked;
 
@@ -140,6 +157,8 @@ class PeriodeController extends Controller
         $checkpertanyaan = TrxPertanyaanLembaga::where('id_periode', $request->periode_id)->first();
         if (!$checkpertanyaan) {
             foreach ($data_user as $key => $e) {
+                // get data id_main int tabel trx_main where users_id and periode id
+                $main = DB::table('trx_main')->where('id_user', $e->id)->where('id_periode', $request->periode_id)->first();
                 foreach ($data_pertanyaan as $key => $value) {
                     $pertanyaanTatanan = new TrxPertanyaanLembaga;
                     $pertanyaanTatanan->id_periode = $request->periode_id;
@@ -151,6 +170,7 @@ class PeriodeController extends Controller
                     $pertanyaanTatanan->jawaban_b = $value->jawaban_b;
                     $pertanyaanTatanan->file = $value->file;
                     $pertanyaanTatanan->user_id = $e->id;
+                    $pertanyaanTatanan->id_main = $main->id;
                     $pertanyaanTatanan->save();
                 }
             }
@@ -174,6 +194,7 @@ class PeriodeController extends Controller
     }
     public function periode_destroy($id)
     {
+        DB::table('trx_main')->where('id_periode', $id)->delete();
         TrxPertanyaan::where('id_periode', $id)->delete();
         TrxTatanan::where('id_periode', $id)->delete();
         TrxPertanyaanLembaga::where('id_periode', $id)->delete();
