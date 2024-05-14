@@ -135,10 +135,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai A</label>
                             <select class="form-select" aria-label="Default select example" id="jawaban_a_select" name="jawaban_a_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -153,10 +153,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai B</label>
                             <select class="form-select" aria-label="Default select example" id="jawaban_b_select" name="jawaban_b_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -169,10 +169,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai C</label>
                             <select class="form-select" aria-label="Default select example" id="jawaban_c_select" name="jawaban_c_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -187,10 +187,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai D</label>
                             <select class="form-select" aria-label="Default select example" id="jawaban_d_select" name="jawaban_d_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -270,10 +270,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai A</label>
                             <select class="form-select" aria-label="Default select example" id="editjawaban_a_select" name="editjawaban_a_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -288,10 +288,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai B</label>
                             <select class="form-select" aria-label="Default select example" id="editjawaban_b_select" name="editjawaban_b_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -304,10 +304,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai C</label>
                             <select class="form-select" aria-label="Default select example" id="editjawaban_c_select" name="editjawaban_c_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -322,10 +322,10 @@
                         <div class="col-md-6">
                             <label for="jawaban" class="form-label">Nilai D</label>
                             <select class="form-select" aria-label="Default select example" id="editjawaban_d_select" name="editjawaban_d_select">
-                                <option value="0">-</option>
                                 <option value="0">0</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
+                                <option value="75">75</option>
                                 <option value="100">100</option>
                             </select>
                         </div>
@@ -372,7 +372,6 @@
         var kat = $('input[name="kat"]:checked').val();
         var dinas = $('#dinas').val();
 
-        console.log(tatanan, dinas);
 
 
         // Validasi data
@@ -421,85 +420,101 @@
 
     // Fungsi untuk menampilkan form edit dalam SweetAlert
     function editData(id) {
-    // AJAX request untuk mendapatkan data pertanyaan yang akan diedit
-    $.get("pertanyaan-tatanan/" + id + "/edit", function(response) {
-        // Ubah string ID menjadi array
-        var id_tatanan = response.pertanyaan.tatanan_id;
-        console.log(response);
-        // Kosongkan dulu elemen select sebelum menambahkan opsi baru
-        $('#editpilihtatanan').empty();
-        $('#editpilihdinas').empty();
+        // AJAX request untuk mendapatkan data pertanyaan yang akan diedit
+        $.get("pertanyaan-tatanan/" + id + "/edit", function(response) {
+            // Ubah string ID menjadi array
+            var id_tatanan = response.pertanyaan.tatanan_id;
+            console.log(response);
+            // Kosongkan dulu elemen select sebelum menambahkan opsi baru
+            $('#editpilihtatanan').empty();
+            $('#editpilihdinas').empty();
 
-        // Loop through response.tatanan untuk menambahkan opsi-opsi baru ke dalam select
-        response.tatanan.forEach(function(item) {
-            var selected = id_tatanan == item.id ? 'selected' : ''; // Pilih opsi jika item.id ada dalam array id_tatanan
-            $('#editpilihtatanan').append('<option value="' + item.id + '" ' + selected + '>' + item.nama_tatanan + '</option>');
-        });
-        response.dinas.forEach(function(item) {
-            var selected = id_tatanan == item.id ? 'selected' : ''; // Pilih opsi jika item.id ada dalam array id_tatanan
-            $('#editpilihdinas').append('<option value="' + item.id + '" ' + selected + '>' + item.nama_dinas + '</option>');
-        });
-
-        // Isi data ke dalam modal edit
-        $('#editpertanyaan').val(response.pertanyaan.pertanyaan);
-        $('#editjawaban_a').val(response.pertanyaan.jawaban_a);
-        $('#editjawaban_b').val(response.pertanyaan.jawaban_b);
-        $('#editjawaban_c').val(response.pertanyaan.jawaban_c);
-        $('#editjawaban_d').val(response.pertanyaan.jawaban_d);
-        $('#editjawaban_a_select').val(response.pertanyaan.nilai_a);
-        $('#editjawaban_b_select').val(response.pertanyaan.nilai_b);
-        $('#editjawaban_c_select').val(response.pertanyaan.nilai_c);
-        $('#editjawaban_d_select').val(response.pertanyaan.nilai_d);
-        $("input[name='editkat'][value='" + response.pertanyaan.kat + "']").prop('checked', true);
-
-
-        $('#edit_id').val(id);
-
-        // Tampilkan modal edit
-        $('#editModal').modal('show');
-    })
-    .fail(function(xhr, status, error) {
-        // Jika terjadi kesalahan dalam pengambilan data, tampilkan pesan error
-        swal("Oops!", "Terjadi kesalahan: " + xhr.responseText, "error");
-    });
-}
-
-// Fungsi untuk mengirim data edit ke server
-function submitEdit() {
-    // Ambil data dari form edit
-    var id = $('#edit_id').val();
-    var editpertanyaan = $('#editpertanyaan').val();
-    var editpilihdinas = $('#editpilihdinas').val();
-    var editpilihtatanan = $('#editpilihtatanan').val();
-    var kat = $("input[name='kat']:checked").val();
-
-    // Kirim request update ke server
-    $.ajax({
-        url: "pertanyaan-tatanan/" + id,
-        method: "PUT",
-        data: {
-            _token: '{{ csrf_token() }}',
-            pertanyaan: editpertanyaan,
-            pilihdinas: editpilihdinas,
-            pilihtatanan: editpilihtatanan,
-            kat: kat
-        },
-        success: function(response) {
-            // Jika update berhasil, tampilkan pesan berhasil dengan SweetAlert
-            swal("Data berhasil diupdate!", {
-                icon: "success",
+            // Loop through response.tatanan untuk menambahkan opsi-opsi baru ke dalam select
+            response.tatanan.forEach(function(item) {
+                var selected = id_tatanan == item.id ? 'selected' : ''; // Pilih opsi jika item.id ada dalam array id_tatanan
+                $('#editpilihtatanan').append('<option value="' + item.id + '" ' + selected + '>' + item.nama_tatanan + '</option>');
             });
-            // Tutup modal edit
-            $('#editModal').modal('hide');
-            // Refresh halaman untuk menampilkan perubahan
-            location.reload();
-        },
-        error: function(xhr, status, error) {
-            // Jika terjadi kesalahan, tampilkan pesan error dengan SweetAlert
+            response.dinas.forEach(function(item) {
+                var selected = id_tatanan == item.id ? 'selected' : ''; // Pilih opsi jika item.id ada dalam array id_tatanan
+                $('#editpilihdinas').append('<option value="' + item.id + '" ' + selected + '>' + item.nama_dinas + '</option>');
+            });
+
+            // Isi data ke dalam modal edit
+            $('#editpertanyaan').val(response.pertanyaan.pertanyaan);
+            $('#editjawaban_a').val(response.pertanyaan.jawaban_a);
+            $('#editjawaban_b').val(response.pertanyaan.jawaban_b);
+            $('#editjawaban_c').val(response.pertanyaan.jawaban_c);
+            $('#editjawaban_d').val(response.pertanyaan.jawaban_d);
+            $('#editjawaban_a_select').val(response.pertanyaan.nilai_a);
+            $('#editjawaban_b_select').val(response.pertanyaan.nilai_b);
+            $('#editjawaban_c_select').val(response.pertanyaan.nilai_c);
+            $('#editjawaban_d_select').val(response.pertanyaan.nilai_d);
+            $("input[name='editkat'][value='" + response.pertanyaan.kat + "']").prop('checked', true);
+
+
+            $('#edit_id').val(id);
+
+            // Tampilkan modal edit
+            $('#editModal').modal('show');
+        })
+        .fail(function(xhr, status, error) {
+            // Jika terjadi kesalahan dalam pengambilan data, tampilkan pesan error
             swal("Oops!", "Terjadi kesalahan: " + xhr.responseText, "error");
-        }
-    });
-}
+        });
+    }
+
+    // Fungsi untuk mengirim data edit ke server
+    function submitEdit() {
+        // Ambil data dari form edit
+        var id = $('#edit_id').val();
+        var editpertanyaan = $('#editpertanyaan').val();
+        var editpilihdinas = $('#editpilihdinas').val();
+        var editpilihtatanan = $('#editpilihtatanan').val();
+        var jawaban_a = $('#editjawaban_a').val();
+        var jawaban_b = $('#editjawaban_b').val();
+        var jawaban_c = $('#editjawaban_c').val();
+        var jawaban_d = $('#editjawaban_d').val();
+        var jawaban_a_select = $('#editjawaban_a_select').val();
+        var jawaban_b_select = $('#editjawaban_b_select').val();
+        var jawaban_c_select = $('#editjawaban_c_select').val();
+        var jawaban_d_select = $('#editjawaban_d_select').val();
+        var kat = $("input[name='kat']:checked").val();
+
+        // Kirim request update ke server
+        $.ajax({
+            url: "pertanyaan-tatanan/" + id + "/update",
+            method: "POST",
+            data: {
+                _token: '{{ csrf_token() }}',
+                pertanyaan: editpertanyaan,
+                dinas: editpilihdinas,
+                tatanan: editpilihtatanan,
+                kat: kat,
+                jawaban_a: jawaban_a,
+                jawaban_b: jawaban_b,
+                jawaban_c: jawaban_c,
+                jawaban_d: jawaban_d,
+                jawaban_a_select: jawaban_a_select,
+                jawaban_b_select: jawaban_b_select,
+                jawaban_c_select: jawaban_c_select,
+                jawaban_d_select: jawaban_d_select,
+            },
+            success: function(response) {
+                // Jika update berhasil, tampilkan pesan berhasil dengan SweetAlert
+                swal("Data berhasil diupdate!", {
+                    icon: "success",
+                });
+                // Tutup modal edit
+                $('#editModal').modal('hide');
+                // Refresh halaman untuk menampilkan perubahan
+                // location.reload();
+            },
+            error: function(xhr, status, error) {
+                // Jika terjadi kesalahan, tampilkan pesan error dengan SweetAlert
+                swal("Oops!", "Terjadi kesalahan: " + xhr.responseText, "error");
+            }
+        });
+    }
 
 
     // Fungsi untuk mengirim data edit ke server

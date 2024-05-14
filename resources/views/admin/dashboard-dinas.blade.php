@@ -32,10 +32,9 @@
                     <!--begin::Select-->
                     <div class="me-6 my-1">
                         <select id="kt_filter_orders" name="orders" data-control="select2" data-hide-search="true" class="form-select form-select-solid form-select-sm">
-                            @foreach ($periode_list as $item)
+                           @foreach ($periode_list as $item)
                             <option value="{{ $item->id }}" {{$item->id == $periodeId ? 'selected':''}}>{{ $item->periode }}</option>
                            @endforeach
-
                         </select>
                     </div>
                     <!--end::Select-->
@@ -50,33 +49,6 @@
                 <div class="table-responsive">
                     <!--begin::Table-->
                     <div id="kt_profile_overview_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
-                        <div class="table-responsive">
-                            <table class="table table-row-dashed table-row-gray-300 gy-7">
-                                <thead>
-                                    <tr class="fw-bold fs-6 text-gray-800">
-                                       <th></th>
-                                        <th>Sehat Mandiri</th>
-                                        <th>Perkim</th>
-                                        <th>Pendidikan</th>
-                                        <th>Pasar</th>
-                                        <th>Pariwisata</th>
-                                        <th>Transportasi</th>
-                                        <th>Perindustrian</th>
-                                        <th>Sosial</th>
-                                        <th>Bencana</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td> Assesment Kab/Kota</td>
-                                        @foreach ($tatanan_averages as $average)
-                                            <th>{{ $average }}</th>
-                                        @endforeach
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <span class="d-flex text-gray-900 fw-bold m-0 fs-7 py-2 py-lg-0 gap-2"">Skor Self Assesment Kabupaten/Kota Mengikuti Penghargaan Swasti Saba </span>
-                        </div>
                         <div class="table-responsive">
                             <table class="table table-row-dashed table-row-gray-300 gy-7">
                                 <thead>
@@ -104,7 +76,6 @@
                                                 @if ($item['namaWilayah'] == $wilayah['namaWilayah'])
                                                     {{ $item['kategori'] }}
                                                 @endif
-
                                             @endforeach
                                             </td>
                                             @foreach ($wilayah['nilaiTatanan'] as $nilai)
@@ -115,7 +86,6 @@
                                                 @if ($item['namaWilayah'] == $wilayah['namaWilayah'])
                                                     {{ $item['rataRataGlobal']}}%
                                                 @endif
-
                                             @endforeach
                                             </td>
                                         </tr>
@@ -123,7 +93,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     <!--end::Table-->
                 </div>
                 <!--end::Table container-->

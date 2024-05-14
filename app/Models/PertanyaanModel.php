@@ -10,6 +10,6 @@ class PertanyaanModel extends Model
     use HasFactory;
     protected $table = 'pertanyaan';
     protected $primaryKey = 'id';
-    protected $fillable = ['pertanyaan', 'dinas_id', 'kab_kota_id', 'indikator_id','provinsi_id', 'tatanan_id', 'user_id', 'status', 'jawaban_a', 'jawaban_b', 'jawaban_c', 'jawaban_d', 'nilai_a', 'nilai_b', 'nilai_c', 'nilai_d', 'ket', 'file'];
+    protected $fillable = ['pertanyaan', 'dinas_id', 'kab_kota_id', 'indikator_id','provinsi_id', 'tatanan_id', 'user_id', 'status', 'jawaban_a', 'jawaban_b', 'jawaban_c', 'jawaban_d', 'nilai_a', 'nilai_b', 'nilai_c', 'nilai_d', 'kat', 'file'];
     public $timestamps = true;
 }

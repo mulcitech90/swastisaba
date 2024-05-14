@@ -76,7 +76,7 @@
 											<ul class="nav flex-nowrap text-nowrap">
 												@if (Auth::user()->role == 'pemda')
                                                 <li class="nav-item">
-													<a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+													<a class="nav-link {{ Request::is('homepage') ? 'active' : '' }}" href="{{ route('dashboard.pemda') }}">Dashboard</a>
 												</li>
 												<li class="nav-item">
 													<a class="nav-link {{ Request::is('pengisianform/*') ? 'active' : '' }}""  data-bs-toggle="tab" href="#kt_header_navs_tab_2">Intrument Penilaian</a>
@@ -87,7 +87,7 @@
                                                 @endif
                                                 @if (Auth::user()->role == 'dinas')
                                                 <li class="nav-item">
-													<a class="nav-link {{ Request::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+													<a class="nav-link {{ Request::is('penilaian') ? 'active' : '' }}" href="{{ route('dashboard.dinas') }}">Dashboard</a>
 												</li>
                                                 <li class="nav-item">
 													<a class="nav-link {{ Request::is('validator') || Request::is('validator/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_4">Validasi</a>

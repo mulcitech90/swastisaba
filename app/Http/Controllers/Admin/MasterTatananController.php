@@ -122,7 +122,7 @@ class MasterTatananController extends Controller
         $pertanyaanTatanan->save();
 
         // Redirect kembali dengan pesan sukses
-        return redirect()->route('master.pertanyaan-lembaga')->with('success', 'Data pertanyaan berhasil ditambahkan!');
+        return redirect()->route('master.pertanyaan-tatanan')->with('success', 'Data pertanyaan berhasil ditambahkan!');
       }
       // pertanyaanEdit
       public function pertanyaanEdit($id)
@@ -141,20 +141,27 @@ class MasterTatananController extends Controller
       // pertanyaanUpdate
       public function pertanyaanUpdate(Request $request, $id)
       {
-          // Validasi input
-          $request->validate([
-              'nama' =>'required|string|max:255',
-              'pilihlembaga' =>'required',
-          ]);
 
-          // Temukan dan perbarui kelembagaan berdasarkan ID
-          $pertanyaan = PertanyaanKelembagaanModel::findOrFail($id);
-          $pertanyaan->pertanyaan = $request->nama;
-          $pertanyaan->id_kelembagaan = $request->pilihlembaga;
-          $pertanyaan->save();
+        $pertanyaanTatanan = PertanyaanModel::findOrFail($id);
+        // Perbarui data dengan input dari request
+        $pertanyaanTatanan->pertanyaan = $request->pertanyaan;
+        $pertanyaanTatanan->jawaban_a = $request->jawaban_a;
+        $pertanyaanTatanan->jawaban_b = $request->jawaban_b;
+        $pertanyaanTatanan->jawaban_c = $request->jawaban_c;
+        $pertanyaanTatanan->jawaban_d = $request->jawaban_d;
+        $pertanyaanTatanan->nilai_a = $request->jawaban_a_select;
+        $pertanyaanTatanan->nilai_b = $request->jawaban_b_select;
+        $pertanyaanTatanan->nilai_c = $request->jawaban_c_select;
+        $pertanyaanTatanan->nilai_d = $request->jawaban_d_select;
+        $pertanyaanTatanan->kat = $request->kat;
+        $pertanyaanTatanan->dinas_id = $request->dinas;
+        $pertanyaanTatanan->tatanan_id = $request->tatanan;
+
+        // Simpan data yang diperbarui ke database
+        $pertanyaanTatanan->save();
 
           // Redirect kembali dengan pesan sukses
-          return redirect()->route('master.pertanyaan-lembaga')->with('success', 'Data pertanyaan berhasil diperbarui!');
+          return redirect()->route('master.pertanyaan-tatanan')->with('success', 'Data pertanyaan berhasil diperbarui!');
       }
       // pertanyaanDestroy
       public function pertanyaanDestroy($id)

@@ -30,7 +30,10 @@ Auth::routes();
 
 // Rute-rute lain menggunakan LoginRegisterController
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'dashboard_admin'])->name('dashboard'); //dashboard admin
+    Route::get('/homepage', [DashboardController::class, 'dashboard_pemda'])->name('dashboard.pemda'); //dashboard pemda
+    Route::get('/penilaian', [DashboardController::class, 'dashboard_dinas'])->name('dashboard.dinas'); //dashboard dinas
+
     Route::post('/logout', [LoginRegisterController::class, 'logout'])->name('logout');
 
     // group master

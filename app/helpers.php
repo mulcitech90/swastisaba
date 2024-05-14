@@ -125,4 +125,13 @@ if (!function_exists('pemda')) {
         return $result->name;
     }
 }
+if (!function_exists('usersName')) {
+    function usersName($id) {
+
+        $result = DB::table('users')->join('trx_main', 'users.id = trx_main.id_user')
+        ->where('trx_main.id', $id)
+        ->select('users.name')->get();
+        return $result;
+    }
+}
 ?>

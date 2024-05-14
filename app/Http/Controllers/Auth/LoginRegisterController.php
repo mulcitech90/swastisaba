@@ -74,8 +74,14 @@ class LoginRegisterController extends Controller
 
         if(Auth::attempt($credentials))
         {
-           return redirect()->route('dashboard')
-            ->withSuccess('You have logged in successfully!');
+            if (Auth::user()->role == 'admin') {
+                return redirect()->route('dashboard')->withSuccess('Selamat Datang');
+            }elseif (Auth::user()->role == 'pemda') {
+                return redirect()->route('dashboard.pemda')->withSuccess('Selamat Datang');
+            }elseif (Auth::user()->role == 'dinas') {
+                return redirect()->route('dashboard.dinas')->withSuccess('Selamat Datang');
+            }
+
         }
 
         return back()->withErrors([
