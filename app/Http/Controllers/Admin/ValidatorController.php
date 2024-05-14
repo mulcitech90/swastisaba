@@ -194,11 +194,11 @@ class ValidatorController extends Controller
     public function submitpengisian(Request $request){
         try {
             $id = $request->id;
-                $data =DB::table('trx_main')
-                    ->where('id', '=', $request->id_main)
-                    ->update([
-                    'status' => 'Perbaikan',
-                ]);
+            $data =DB::table('trx_main')
+                ->where('id', '=', $request->id_main)
+                ->update([
+                'status' => 'Perbaikan',
+            ]);
             return response()->json($data);
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
@@ -219,29 +219,48 @@ class ValidatorController extends Controller
                 ->where('dinas_id', $idDinas)
                 ->where('status', '1')
                 ->get();
-            $dataTatanan = TrxTatanan::where('id_periode', $idPeriode)->get();
-            $jumlahSoal = $dataSoal->count();
-            // Inisialisasi array untuk menyimpan nilai per tatanan_id
-            $nilaiTatanan = [];
+            if (count($dataSoal)>0) {
+                $dataTatanan = TrxTatanan::where('id_periode', $idPeriode)->get();
+                $jumlahSoal = $dataSoal->count();
+                // Inisialisasi array untuk menyimpan nilai per tatanan_id
+                $nilaiTatanan = [];
 
-            // Inisialisasi array untuk menyimpan total nilai dan jumlah soal per tatanan_id
-            foreach ($dataTatanan as $ta) {
-                $nilaiTatanan[$ta->id] = 0;
-            }
-
-            foreach ($dataSoal as $v) {
-                if (isset($nilaiTatanan[$v->tatanan_id])) {
-                    $nilaiTatanan[$v->tatanan_id] += $v->nilai;
-                } else {
-                    $nilaiTatanan[$v->tatanan_id] = $v->nilai;
+                // Inisialisasi array untuk menyimpan total nilai dan jumlah soal per tatanan_id
+                foreach ($dataTatanan as $ta) {
+                    $nilaiTatanan[$ta->id] = 0;
                 }
-            }
-            $totalNilaiSemuaTatanan = array_sum($nilaiTatanan);
-            $rata2Nilai =  $totalNilaiSemuaTatanan / $jumlahSoal;
-            // check input
-            $check = DB::table('trx_score')->where('id_main', $idMain)->where('id_periode', $idPeriode)->where('id_dinas', $idDinas)->where('id_user_validator', $idUserValidator)->first();
 
-            if (!$check) {
+                foreach ($dataSoal as $v) {
+                    if (isset($nilaiTatanan[$v->tatanan_id])) {
+                        $nilaiTatanan[$v->tatanan_id] += $v->nilai;
+                    } else {
+                        $nilaiTatanan[$v->tatanan_id] = $v->nilai;
+                    }
+                }
+                $totalNilaiSemuaTatanan = array_sum($nilaiTatanan);
+                $rata2Nilai =  $totalNilaiSemuaTatanan / $jumlahSoal;
+                // check input
+                $check = DB::table('trx_score')->where('id_main', $idMain)->where('id_periode', $idPeriode)->where('id_dinas', $idDinas)->where('id_user_validator', $idUserValidator)->delete();
+                foreach ($nilaiTatanan as $y => $ve) {
+                    $score = [
+                        'id_main' => $idMain,
+                        'id_periode' => $idPeriode,
+                        'id_tatanan' => $y,
+                        'id_dinas' =>$idDinas,
+                        'id_user_validator' => $idUserValidator,
+                        'nilai' => $ve
+                    ];
+                    $data = DB::table('trx_score')->insert($score);
+                }
+            }else{
+                $dataTatanan = TrxTatanan::where('id_periode', $idPeriode)->get();
+                $nilaiTatanan = [];
+
+                // Inisialisasi array untuk menyimpan total nilai dan jumlah soal per tatanan_id
+                foreach ($dataTatanan as $ta) {
+                    $nilaiTatanan[$ta->id] = 0;
+                }
+                $check = DB::table('trx_score')->where('id_main', $idMain)->where('id_periode', $idPeriode)->where('id_dinas', $idDinas)->where('id_user_validator', $idUserValidator)->delete();
                 foreach ($nilaiTatanan as $y => $ve) {
                     $score = [
                         'id_main' => $idMain,
@@ -254,6 +273,11 @@ class ValidatorController extends Controller
                     $data = DB::table('trx_score')->insert($score);
                 }
             }
+            $data =DB::table('trx_main')
+                ->where('id', '=', $idMain)
+                ->update([
+                'status' => 'Selesai',
+            ]);
 
             $notif = [
                 'type' =>'success',

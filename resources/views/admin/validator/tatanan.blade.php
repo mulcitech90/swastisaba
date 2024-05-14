@@ -50,7 +50,7 @@
                                 <th class="text-center">Periode</th>
                                 <th class="text-center">Jumlah Tatanan</th>
                                 {{-- <th class="text-center">Persentase</th> --}}
-                                <th class="text-center">Status</th>
+                                {{-- <th class="text-center">Status</th> --}}
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -115,8 +115,7 @@ $(document).ready(function() {
                             '<td>' + item.name + '</td>' +
                             '<td class="text-center">' + dataname +'</td>' +
                             '<td class="text-center">9</td>' +
-                            // '<td class="text-center">9</td>' +
-                            '<td class="text-center">'+status+'</td>' +
+                            //'<td class="text-center">'+status+'</td>' +
                             '<td class="text-center">'+action+'</td>' +
                         '</tr>'
                     );
