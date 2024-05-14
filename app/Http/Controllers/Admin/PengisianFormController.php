@@ -12,6 +12,7 @@ use App\Models\TrxKelembagaanModel as TrxKelembagaan;
 use App\Models\IndikatorModel as Indikator;
 use App\Models\User;
 use Auth;
+use DB;
 use Illuminate\Support\Facades\Storage;
 
 class PengisianFormController extends Controller
@@ -20,24 +21,32 @@ class PengisianFormController extends Controller
     public function start(Request $request)
     {
         if ($request->prosess == 'tatanan') {
-            $data = User::where('id', '=', Auth::user()->id)->update([
-                    'status_pengisian' => 'Pengisian',
+            $data = DB::table('trx_main')
+                    ->where('id_user', '=', Auth::user()->id)
+                    ->update([
+                    'status' => 'Dalam Pengisian',
                     ]);
         }else{
-            $data = User::where('id', '=', Auth::user()->id)->update([
-                    'status_pengisian_lembaga' => 'Pengisian',
+            $data = DB::table('trx_main')
+                    ->where('id_user', '=', Auth::user()->id)
+                    ->update([
+                    'status_lembaga' => 'Dalam Pengisian',
                     ]);
         }
         return response()->json($data);
     }
     public function periode_tatanan()
     {
-        $data = Periode::orderBy('id', 'DESC')->get();
+        $data = DB::table('trx_main')
+        ->where('id_user', '=', Auth::user()->id)
+        ->get();
         return view('admin.pengisianform.tatanan',compact('data'));
     }
     public function periode_lembaga()
     {
-        $data = Periode::orderBy('id', 'DESC')->get();
+        $data = DB::table('trx_main')
+        ->where('id_user', '=', Auth::user()->id)
+        ->get();
         return view('admin.pengisianform.lembaga',compact('data'));
     }
     public function pertanyaanlist(Request $request, $id)
@@ -162,13 +171,17 @@ class PengisianFormController extends Controller
             $id = $request->id;
             $status = $request->status;
             if ($request->prosess == 'tatanan') {
-                $data = User::where('id', '=', Auth::user()->id)->update([
-                    'status_pengisian' => 'Verifikasi',
-                ]);
+                $data =DB::table('trx_main')
+                        ->where('id_user', '=', Auth::user()->id)
+                        ->update([
+                        'status' => 'Verifikasi',
+                        ]);
             }else{
-                $data = User::where('id', '=', Auth::user()->id)->update([
-                    'status_pengisian_lembaga' => 'Verifikasi',
-                ]);
+                $data = DB::table('trx_main')
+                        ->where('id_user', '=', Auth::user()->id)
+                        ->update([
+                        'status_lembaga' => 'Verifikasi',
+                        ]);
             }
 
             return response()->json($data);

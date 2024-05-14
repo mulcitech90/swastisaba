@@ -120,6 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/pengiisiansoal', [ValidatorController::class,'pengisianSoal'])->name('validator.pengisianSoal');
         Route::post('/pengiisiansoallembaga', [ValidatorController::class,'pengisianSoallembaga'])->name('validator.pengisianSoallembaga');
         Route::post('/submitpengisian', [ValidatorController::class,'submitpengisian'])->name('validator.submitpengisian');
+        Route::post('/penilaian', [ValidatorController::class,'penilaian'])->name('validator.penilaian');
         Route::post('/uploadfile', [ValidatorController::class, 'uploadfile'])->name('validator.uploadfile');
         Route::post('/start', [ValidatorController::class, 'start'])->name('validator.start');
         Route::get('/downloadfile/{id}', [ValidatorController::class, 'downloadfile']);

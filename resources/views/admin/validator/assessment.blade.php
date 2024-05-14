@@ -18,9 +18,11 @@
             <div class="card-header">
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold text-gray-900">Daftar Periode dan Instrumen Penilaian ({{pemda($id_check)}})</span>
-                    <span class="text-muted mt-1 fw-semibold fs-7">{{$periode ? $periode->periode : '-' }}</span>
-                    <input type="hidden" name="periode_id" id="periode_id" value="{{$periode->id }}">
+                    <span class="text-muted mt-1 fw-semibold fs-7">{{$periode ? $periode->tahun_periode : '-' }}</span>
+                    <input type="hidden" name="periode_id" id="periode_id" value="{{$periode->id_periode }}">
+                    <input type="hidden" name="main_id" id="main_id" value="{{$periode->id }}">
                     <input type="hidden" name="user_id" id="user_id" value="{{$id_check}}">
+                    <input type="hidden" name="dinas_id" id="dinas_id" value="{{Auth::user()->id_dinas}}">
 
                 </h3>
             </div>
@@ -42,9 +44,11 @@
 
                         <div class="col-md-8 text-end">
                             <a href={{url('validator')}} class="btn btn-secondary"><span>Kembali</span></a>
-
+                            <button type="button" class="btn btn-warning revisisoal" id="revisi">
+                                <span>Perbaiki</span>
+                            </button>
                             <button type="button" class="btn btn-success simpansoal" id="simpan">
-                                <span>Simpan</span>
+                                <span>Setujui</span>
                             </button>
                         </div>
                     </div>
@@ -157,6 +161,24 @@
                 cancelButtonText: "Tidak",
             }).then((result) => {
                 if (result.isConfirmed) {
+                  postpenilaian();
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
+                }
+            });
+
+    });
+    $('body').on('click', '.revisisoal', function (e) {
+        e.preventDefault();
+        Swal.fire({
+                title: "Konfirmasi",
+                icon: "question",
+                text: "Apakah Anda ingin revisi pengisian ini? Setelah disimpan soal akan di isi ulang oleh Pemda !!!",
+                showCancelButton: true,
+                confirmButtonText: "Ya",
+                cancelButtonText: "Tidak",
+            }).then((result) => {
+                if (result.isConfirmed) {
                     postpertanyaan();
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
                     Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
@@ -244,9 +266,9 @@
                 $.each(response, function(index, item) {
 
                     if (item.file != null) {
-                        var link = '<a href="'+item.file+'" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Lampiran</a>';
+                        var link = '<a href="'+item.file+'" target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat</a>';
                     }else{
-                        var link = '<a href="javascript:void(0)" class="btn btn-danger btn-sm waves-effect waves-float waves-light">Tidak terlampir</a>';
+                        var link = '<a href="javascript:void(0)" class="btn btn-danger btn-sm waves-effect waves-float waves-light">Kosong</a>';
                     }
 
                     var jawaban = '';
@@ -279,28 +301,45 @@
 
                         jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="d" value="'+item.nilai_d+'" ' + checkedD + '> '+item.jawaban_d + '<br><br>';
                     }
+                    if(item.status == 0) {
+                        var checkedReject = item.jawaban === 'd' ? 'checked' : '';
+
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="d" value="'+item.nilai_d+'" ' + checkedD + '> '+item.jawaban_d + '<br><br>';
+                    }
+                    var checkedV1 = '';
+                    var checkedV0 = '';
+                    if (item.status == 1) {
+                        checkedV1 = 'checked';
+                    }
+                    if (item.status == 2) {
+                        checkedV0 = 'checked';
+                    }
+                    var cacatan = '';
+                    if (item.cacatan != null ) {
+                        cacatan = item.cacatan;
+                    }
 
                     penilaian += `<div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="radio" value="" id="flexRadioDefault"/>
-                                    <label class="form-check-label" for="flexRadioDefault">
+                                    <input class="form-check-input" type="radio" name="validasi`+item.id+`" data-id="`+item.id+`" value="2" `+checkedV0+` />
+                                    <label class="form-check-label">
                                         Ditolak
                                     </label>
                                 </div>
                                 <br>
                                 <div class="form-check form-check-custom form-check-solid">
-                                    <input class="form-check-input" type="radio" value="" id="flexRadioChecked" checked="checked" />
-                                    <label class="form-check-label" for="flexRadioChecked">
+                                    <input class="form-check-input" type="radio" name="validasi`+item.id+`" data-id="`+item.id+`" value="1" `+checkedV1+`  />
+                                    <label class="form-check-label">
                                         Disetujui
                                     </label>
                                 </div>`;
                     justify += `<div >
-                                    <textarea class="form-control"  id="floatingTextarea2" style="height: 50px"></textarea>
+                                    <textarea class="form-control"  id="cacatan`+item.id+`" style="height: 50px">`+ cacatan +`</textarea>
                                 </div>`;
 
                     var indikator = '';
-                    var nilaix = 'Belum Disi';
+                    var nilaix = 'Belum disi';
                     if (item.nilai == null) {
-                        nilaix = 'Belum Disi';
+                        nilaix = 'Belum disi';
                     }else{
                         nilaix = item.nilai;
                     }
@@ -328,8 +367,9 @@
 
                         '</tr>'
                     );
-                    $("input[type='radio']").on('click', function(){
+                    $("input[name="+item.id+"]").on('click', function(){
                             var radioValue = $("input[name="+item.id+"]:checked").val();
+
                             if(radioValue){
                                 var nilai = $(this).val();
                                 // data-id
@@ -352,7 +392,8 @@
                                             jawaban: jawaban,
                                             tatanan_id: tatanan_id,
                                             periode_id: periode_id,
-                                            nilai:nilai
+                                            nilai:nilai,
+                                            tag : 'not'
                                         },
                                         success: function(response) {
                                             var user_id = $('#user_id').val();
@@ -364,6 +405,75 @@
                                         }
                                     });
                             }
+                    });
+                    $("input[name=validasi"+item.id+"]").on('click', function(){
+                            var radioValue = $("input[name=validasi"+item.id+"]:checked").val();
+
+                            if(radioValue){
+                                var nilai = $(this).val();
+                                var dataId = $(this).data('id');
+                                var tatanan_id = $("#pilihitatanan").val();
+                                var periode_id = $("#periode_id").val();
+
+                                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                                // ajax post
+                                $.ajax({
+                                        url: "/validator/pengiisiansoal",
+                                        type: 'POST',
+                                        headers: {
+                                            'X-CSRF-TOKEN': csrfToken
+                                        },
+                                        data: {
+                                            dataId: dataId,
+                                            jawaban: jawaban,
+                                            tatanan_id: tatanan_id,
+                                            periode_id: periode_id,
+                                            validator:nilai,
+                                            tag : 'validator'
+                                        },
+                                        success: function(response) {
+                                            var user_id = $('#user_id').val();
+                                        loadDataPertanyaan(tatanan_id, periode_id, user_id);
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('Terjadi kesalahan:', error);
+                                            // Tangani kesalahan jika ada
+                                        }
+                                    });
+                            }
+                    });
+                    $("#cacatan"+item.id+"").on('input', function() {
+                        var value = $(this).val();
+
+                        var dataId = item.id;
+                        var tatanan_id = $("#pilihitatanan").val();
+                        var periode_id = $("#periode_id").val();
+
+                        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                        $.ajax({
+                                url: "/validator/pengiisiansoal",
+                                type: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                data: {
+                                    dataId: dataId,
+                                    jawaban: jawaban,
+                                    tatanan_id: tatanan_id,
+                                    periode_id: periode_id,
+                                    cacatan:value,
+                                    tag : 'cacatan'
+                                },
+                                success: function(response) {
+                                //     var user_id = $('#user_id').val();
+                                // loadDataPertanyaan(tatanan_id, periode_id, user_id);
+                                },
+                                error: function(xhr, status, error) {
+                                    // console.error('Terjadi kesalahan:', error);
+                                    // // Tangani kesalahan jika ada
+                                }
+                            });
                     });
 
                 });
@@ -442,27 +552,68 @@
             Swal.fire({
                 title: "Konfirmasi",
                 icon: "question",
-                text: "Anda telah ada di akhir pertanyaan , apakah Anda ingin menyimpan pengisian ini?",
+                text: "Anda telah ada di akhir pertanyaan , apakah anda ingin mensetujui pengisian ini?, Jika ingin memperbaiki assesment ini silahkan click button perbaiki",
                 showCancelButton: true,
-                confirmButtonText: "Ya",
-                cancelButtonText: "Tidak",
+                confirmButtonText: "Setujui",
+                cancelButtonText: "Perbaiki",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    postpertanyaan();
+                    postpenilaian();
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
+                    postpertanyaan();
                 }
-            });
+            }
+        );
         }
     });
 
 
-    function postpertanyaan(){
+    function postpenilaian(){
         var periode_id = $("#periode_id").val();
+        var main_id = $("#main_id").val();
+        var dinas_id = $("#dinas_id").val();
+        var user_id = $("#user_id").val();
+
         var postData = {
                 id: periode_id,
+                id_dinas : dinas_id,
+                id_main : main_id,
+                id_user : user_id,
+            };
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            $.ajax({
+                url: '/validator/penilaian', // Ganti dengan URL endpoint yang sesuai di server Anda
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                data: postData,
+                success: function(response) {
+                    Swal.fire({
+                    title: "Berhasil!",
+                    icon: "success",
+                    text: "Data Berhasil disimpan",
+                        }).then(() => {
+                        // Mengarahkan ulang setelah menyimpan pengisian
+                        window.location.href = "/validator";
+                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire("Gagal", "Pengisian tidak disimpan.", "error");
+                }
+            });
+    }
+    function postpertanyaan(){
+        var periode_id = $("#periode_id").val();
+        var main_id = $("#main_id").val();
+        var dinas_id = $("#dinas_id").val();
+        var user_id = $("#user_id").val();
+
+        var postData = {
+                id: periode_id,
+                id_main : main_id,
                 status : 3,
-                prosess : 'tatanan',
+                prosess : 'revisi',
             };
             var csrfToken = $('meta[name="csrf-token"]').attr('content');
             $.ajax({
@@ -479,7 +630,7 @@
                     text: "Data Berhasil disimpan",
                         }).then(() => {
                         // Mengarahkan ulang setelah menyimpan pengisian
-                        window.location.href = "/validator/tatanan";
+                        window.location.href = "/validator";
                     });
                 },
                 error: function(xhr, status, error) {

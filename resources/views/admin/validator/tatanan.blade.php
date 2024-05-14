@@ -49,7 +49,7 @@
                                 <th>Wilayah</th>
                                 <th class="text-center">Periode</th>
                                 <th class="text-center">Jumlah Tatanan</th>
-                                <th class="text-center">Persentase</th>
+                                {{-- <th class="text-center">Persentase</th> --}}
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -95,15 +95,28 @@ $(document).ready(function() {
             success: function(response) {
                 $('#kt_datatable_fixed_header tbody').empty();
                 $.each(response, function(index, item) {
-                    var action = '<a href="/validator/assessment/'+ btoa(item.id)+'?pr='+ btoa(periode)+'" class="menu-link px-3"><i class="bi bi-clipboard-check"></i></a>';
+                    var status = '';
+                    if (item.status == 'Belum mengisi') {
+                        status = '<span  class="badge badge-light-info ">Belum mengisi</span>';
+                    } else if(item.status == 'Dalam Pengisian') {
+                        status = '<span  class="badge badge-light-primary ">Dalam Pengisian</span>';
+                    }else if(item.status == 'Verifikasi') {
+                        status = '<span  class="badge badge-secondary ">Verifikasi</span>';
+                    }else if(item.status == 'Perbaikan') {
+                        status = '<span  class="badge badge-light-warning ">Perbaikan</span>';
+                    }else if(item.status == 'Selesai') {
+                        status = '<span  class="badge badge-light-success ">Selesai</span>';
+                    }
+
+                    var action = '<a href="/validator/assessment/'+ btoa(item.id_user)+'?pr='+ btoa(periode)+'" class="menu-link px-3"><i class="bi bi-clipboard-check"></i></a>';
                     $('#kt_datatable_fixed_header tbody').append(
                         '<tr>' +
                             '<td>' + (index + 1) + '</td>' +
                             '<td>' + item.name + '</td>' +
                             '<td class="text-center">' + dataname +'</td>' +
                             '<td class="text-center">9</td>' +
-                            '<td class="text-center">9</td>' +
-                            '<td class="text-center">-</td>' +
+                            // '<td class="text-center">9</td>' +
+                            '<td class="text-center">'+status+'</td>' +
                             '<td class="text-center">'+action+'</td>' +
                         '</tr>'
                     );

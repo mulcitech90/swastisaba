@@ -41,25 +41,25 @@
                             @forelse ($data as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->periode }}</td>
-                                <td class="text-center">{{CountSoalLembaga($item->id, 'hitungsoal')}}</td>
+                                <td>{{ $item->tahun_periode }}</td>
+                                <td class="text-center">{{CountSoalLembaga($item->id_periode, 'hitungsoal')}}</td>
                                 <td class="text-center">
-                                    @if (statuspengisianlembaga(Auth::user()->id) == 'Open')
-                                        <span class="badge badge-primary ">Open</span>
-                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Pengisian')
-                                        <span class="badge badge-secondary ">Pengisian</span>
-                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Verifikasi')
-                                        <span class="badge badge-info ">Verifikasi</span>
-                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Revisi')
-                                        <span class="badge badge-warning ">Revisi</span>
-                                    @elseif (statuspengisianlembaga(Auth::user()->id) == 'Selesai')
-                                        <span class="badge badge-success ">Selesai</span>
+                                    @if ($item->status_lembaga == 'Belum mengisi')
+                                        <span  class="badge badge-light-info ">Belum mengisi</span>
+                                    @elseif($item->status_lembaga == 'Dalam Pengisian')
+                                        <span  class="badge badge-light-primary ">Dalam Pengisian</span>
+                                    @elseif($item->status_lembaga == 'Verifikasi')
+                                        <span  class="badge badge-secondary ">Verifikasi</span>
+                                    @elseif($item->status_lembaga == 'Revisi')
+                                        <span  class="badge badge-light-warning ">Revisi</span>
+                                    @elseif($item->status_lembaga == 'Selesai')
+                                        <span  class="badge badge-light-success ">Selesai</span>
                                     @endif
                                 </td>
 
                                 <td>
                                     <div class="text-center">
-                                        <a href="#" class="menu-link px-3" onclick="Pengisian({{ $item->id }})">
+                                        <a href="#" class="menu-link px-3" onclick="Pengisian({{ $item->id_periode }})">
                                             <i class="bi bi-clipboard-check"></i> <!-- Ikon Delete -->
                                         </a>
                                    </div>

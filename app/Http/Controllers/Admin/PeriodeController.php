@@ -54,11 +54,11 @@ class PeriodeController extends Controller
                 $data_user = User::where('role', 'pemda')->get();
                 // insert to tabel trx_tatanan dan trx_pertanyaan
 
-                $checktatanan = TrxTatanan::where('id_periode', $request->periode_id)->first();
+                $checktatanan = TrxTatanan::where('id_periode', $periode->id)->first();
                 if (!$checktatanan) {
                     foreach ($data_tatanan as $key => $value) {
                         $tatanan = new TrxTatanan();
-                        $tatanan->id_periode = $request->periode_id;
+                        $tatanan->id_periode = $periode->id;
                         $tatanan->id_model = '1';
                         $tatanan->id_tatanan = $value->id;
                         $tatanan->nama_tatanan = $value->nama_tatanan;
@@ -66,7 +66,7 @@ class PeriodeController extends Controller
                         $tatanan->save();
                     }
                 }
-                $checkpertanyaan = TrxPertanyaan::where('id_periode', $request->periode_id)->first();
+                $checkpertanyaan = TrxPertanyaan::where('id_periode',$periode->id)->first();
                 if (!$checkpertanyaan) {
                     foreach ($data_user as $user) {
                         $data = [
