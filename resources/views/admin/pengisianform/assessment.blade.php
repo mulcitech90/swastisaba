@@ -53,6 +53,7 @@
                                     <tr class="fw-semibold fs-6 text-gray-800">
                                         <th>No</th>
                                         <th class="text-left">Pertanyaan</th>
+                                        <th class="text-left"></th>
                                         <th class="text-end">Link Data Pendukung</th>
                                     </tr>
                                 </thead>
@@ -177,36 +178,6 @@
                 text: "Data tidak boleh kosong",
             });
         }else{
-            // var postData = {
-            //     id: id,
-            //     linkPendukung: url
-            // };
-            // var csrfToken = $('meta[name="csrf-token"]').attr('content');
-            // $.ajax({
-            //     url: '/pengisianform/updatelink', // Ganti dengan URL endpoint yang sesuai di server Anda
-            //     type: 'POST',
-            //     headers: {
-            //         'X-CSRF-TOKEN': csrfToken
-            //     },
-            //     data: postData,
-            //     processData: false, // Tambahkan ini agar FormData tidak diproses
-            //     contentType: false, // Tambahkan ini agar FormData tidak diproses
-            //     success: function(response) {
-            //         // init();
-            //         Swal.fire({
-            //             title: "Berhasil!",
-            //             icon: "success",
-            //             text: "Data Berhasil di upload",
-            //         });               // Tutup modal update
-            //         init();
-            //         $('#urlevidence').val('');
-            //         $('#urlinfo').modal('hide');
-
-            //     },
-            //     error: function(xhr, status, error) {
-            //         console.log(error);
-            //     }
-            // });
             $.ajax({
                 url: '/pengisianform/updatelink',
                 type: 'POST',
@@ -261,34 +232,47 @@
 
                 // Loop melalui data yang diterima dan tambahkan ke dalam tabel
                 $.each(response, function(index, item) {
+                    var cacatan = '';
+                    var note  = '';
+                    var disabledA = item.status === 1 ? 'disabled' : '';
+                    var linkss = item.status === 1 ? '' : 'tambahurl';
 
-                    var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Upload</a>';
+                    if ( item.status === 1) {
+                        var link = '<a href="javascript:void(0)" class="btn btn-success btn-sm waves-effect waves-float waves-light " >Disetujui</a>';
+                    }else if(item.status === 2){
+                        cacatan = item.cacatan == null ? '' : item.cacatan ;
+                        note = '<span class="text-danger fs-7 fw-bold">(Perbaikan)</span>';
+                        var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Upload</a ';
+                    }else{
+                        var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Upload</a>';
+                    }
                     var jawaban = '';
+
 
                     // Periksa apakah jawaban_a ada
                     if(item.jawaban_a) {
                         var checkedA = item.jawaban === 'a' ? 'checked' : '';
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="a" value="'+item.nilai_a+'" ' + checkedA + ' > '+item.jawaban_a + '<br><br>';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="a" value="'+item.nilai_a+'" ' + checkedA + ' '+disabledA+'> '+item.jawaban_a + '<br><br>';
                     }
 
                     // Periksa apakah jawaban_b ada
                     if(item.jawaban_b) {
                         var checkedB = item.jawaban === 'b' ? 'checked' : '';
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="b" value="'+item.nilai_b+'" ' + checkedB + '> '+item.jawaban_b + '<br><br>';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="b" value="'+item.nilai_b+'" ' + checkedB + ' '+disabledA+'> '+item.jawaban_b + '<br><br>';
                     }
 
                     // Periksa apakah jawaban_c ada
                     if(item.jawaban_c) {
                         var checkedC = item.jawaban === 'c' ? 'checked' : '';
 
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="c" value="'+item.nilai_c+'" ' + checkedC + '> '+item.jawaban_c + '<br><br>';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="c" value="'+item.nilai_c+'" ' + checkedC + ' '+disabledA+'> '+item.jawaban_c + '<br><br>';
                     }
 
                     // Periksa apakah jawaban_d ada
                     if(item.jawaban_d) {
                         var checkedD = item.jawaban === 'd' ? 'checked' : '';
 
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="d" value="'+item.nilai_d+'" ' + checkedD + '> '+item.jawaban_d + '<br><br>';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="d" value="'+item.nilai_d+'" ' + checkedD + ' '+disabledA+'> '+item.jawaban_d + '<br><br>';
                     }
 
 
@@ -307,7 +291,9 @@
                         '<tr>' +
                             // '<td>' + (index + 1) + '</td>' +
                             '<td>' + item.no_pertanyaan + '</td>' +
+
                             '<td>' + item.pertanyaan +'</br></br>'+jawaban+ '</td>' +
+                            '<td>'+note+'<br>' + cacatan + '</td>' +
                             '<td class="text-end">' + link + '</td>' +
                         '</tr>'
                     );

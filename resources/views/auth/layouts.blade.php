@@ -237,7 +237,7 @@
 											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
                                                 <div class="d-flex flex-column flex-lg-row gap-2">
                                                     <a class="btn btn-sm btn-light-success fw-bold"  href="{{ route('pelaporan.tatanan') }}">Tatanan</a>
-                                                    <a class="btn btn-sm btn-light-primary fw-bold"  href="{{ route('pelaporan.lembaga') }}">Kelembagaan</a>
+                                                    
                                                </div>
 											</div>
 											<!--end::Wrapper-->

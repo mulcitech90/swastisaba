@@ -266,7 +266,7 @@
                 $.each(response, function(index, item) {
 
                     if (item.file != null) {
-                        var link = '<a href="'+item.file+'" target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat</a>';
+                        var link = '<a href="/downloadfiletatanan/' + btoa(item.id) + '" target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat</a>';
                     }else{
                         var link = '<a href="javascript:void(0)" class="btn btn-danger btn-sm waves-effect waves-float waves-light">Kosong</a>';
                     }

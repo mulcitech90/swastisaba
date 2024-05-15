@@ -57,73 +57,91 @@
                                 <i class="fas fa-file-excel"></i> Export to Excel
                             </button>
                              {{-- <span id="currentUrlDisplay"></span> --}}
-                            <table id="tableID" class="table table-row-dashed table-row-gray-800 gy-3 fs-8">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center align-middle" colspan="24">
-                                            <h3 class="text-center">INSTRUMEN PENILIAN</h3>
-                                            <h6 class="text-center">PENYELENGGARAN KABUPATEN/KOTA SEHAT </h6>
-                                            <h6 class="text-center">(KELEMBAGAAN) </h6>
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        @if(!empty($result))
-                                            @php
-                                                $kelembagaanHeaders = [];
-                                                foreach ($result[0]['soal'] as $soal) {
-                                                    $kelembagaanHeaders[$soal->nama_kelembagaan][] = $soal->pertanyaan;
-                                                }
-                                            @endphp
-
-                                            @foreach($kelembagaanHeaders as $nama_kelembagaan => $pertanyaans)
-                                                <th colspan="{{ count($pertanyaans) * 2 }}" class="text-center">{{ $nama_kelembagaan }}</th>
-                                            @endforeach
-                                        @endif
-                                    </tr>
-                                    <tr>
-                                        <th>Wilayah</th>
-                                        <!-- Ambil header dari soal pertama -->
-                                        @if(!empty($result))
-                                            @foreach($result[0]['soal'] as $soal)
-                                            <th colspan="3">{{ $soal->pertanyaan }}</th>
-                                            @endforeach
-                                        @endif
-                                    </tr>
-                                    <tr>
-                                        <th></th>
-                                        @if(!empty($result))
-                                            @foreach($result[0]['soal'] as $soal)
-                                            <th>{{ $soal->jawaban_a }}</th>
-                                            <th>{{ $soal->jawaban_b }}</th>
-                                            <th>File Pendukung</th>
-                                            @endforeach
-                                        @endif
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-9">
-                                    @foreach($result as $row)
-                                        <tr>
-                                            <td>{{ $row['wilayah'] }}</td>
-                                            @foreach($row['soal'] as $soal)
-                                                @if($soal->jawaban == 'Ada')
-                                                    <td>{{$soal->jawaban}}</td></td>
-                                                    <td></td>
-
-                                                @elseif($soal->jawaban == 'Tidak Ada')
-                                                    <td></td>
-                                                    <td>{{$soal->jawaban}}</td>
-                                                @endif
-                                                <td>
-                                                    @if ($soal->file != NULL)
-                                                        {{ env('APP_URL') }}/downloadfile/{{ base64_encode($soal->id)}}</td>
-                                                    @endif
-                                                </td>
-                                            @endforeach
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                             @php
+                             $jumlahSoal = count($result[0]['soal']);
+                             $rataJawaban = array_fill(0, $jumlahSoal, 0);
+                             $jumlahBaris = count($result);
+                             @endphp
+                             
+                             <table id="tableID" class="table table-row-dashed table-row-gray-800 gy-3 fs-8">
+                                 <thead>
+                                     <tr>
+                                         <th class="text-center align-middle" colspan="24">
+                                             <h3 class="text-center">INSTRUMEN PENILIAN</h3>
+                                             <h6 class="text-center">PENYELENGGARAN KABUPATEN/KOTA SEHAT </h6>
+                                             <h6 class="text-center">(KELEMBAGAAN) </h6>
+                                         </th>
+                                     </tr>
+                                     <tr>
+                                         <th></th>
+                                         @if(!empty($result))
+                                             @php
+                                                 $kelembagaanHeaders = [];
+                                                 foreach ($result[0]['soal'] as $soal) {
+                                                     $kelembagaanHeaders[$soal->nama_kelembagaan][] = $soal->pertanyaan;
+                                                 }
+                                             @endphp
+                             
+                                             @foreach($kelembagaanHeaders as $nama_kelembagaan => $pertanyaans)
+                                                 <th colspan="{{ count($pertanyaans) * 3 }}" class="text-center">{{ $nama_kelembagaan }}</th>
+                                             @endforeach
+                                         @endif
+                                     </tr>
+                                     <tr>
+                                         <th>Wilayah</th>
+                                         <!-- Ambil header dari soal pertama -->
+                                         @if(!empty($result))
+                                             @foreach($result[0]['soal'] as $soal)
+                                                 <th colspan="3">{{ $soal->pertanyaan }}</th>
+                                             @endforeach
+                                         @endif
+                                     </tr>
+                                     <tr>
+                                         <th></th>
+                                         @if(!empty($result))
+                                             @foreach($result[0]['soal'] as $soal)
+                                                 <th>{{ $soal->jawaban_a }}</th>
+                                                 <th>{{ $soal->jawaban_b }}</th>
+                                                 <th>File Pendukung</th>
+                                             @endforeach
+                                         @endif
+                                     </tr>
+                                 </thead>
+                                 <tbody class="fs-9">
+                                     @foreach($result as $row)
+                                         <tr>
+                                             <td>{{ $row['wilayah'] }}</td>
+                                             @foreach($row['soal'] as $index => $soal)
+                                                 @if($soal->jawaban == 'Ada')
+                                                     <td>{{$soal->jawaban}}</td>
+                                                     <td></td>
+                                                     @php
+                                                         $rataJawaban[$index]++;
+                                                     @endphp
+                                                 @elseif($soal->jawaban == 'Tidak Ada')
+                                                     <td></td>
+                                                     <td>{{$soal->jawaban}}</td>
+                                                 @endif
+                                                 <td>
+                                                     @if ($soal->file != NULL)
+                                                         {{ env('APP_URL') }}/downloadfile/{{ base64_encode($soal->id)}}</td>
+                                                     @endif
+                                                 </td>
+                                             @endforeach
+                                         </tr>
+                                     @endforeach
+                                 </tbody>
+                                 <tfoot>
+                                     <tr>
+                                         <th>Rata-rata</th>
+                                         @foreach($rataJawaban as $rata)
+                                             <th colspan="2">{{ $jumlahBaris > 0 ? number_format($rata / $jumlahBaris, 2) : '0.00' }}</th>
+                                             <th></th>
+                                         @endforeach
+                                     </tr>
+                                 </tfoot>
+                             </table>
+                             
                         </div>
 
                     <!--end::Table-->
