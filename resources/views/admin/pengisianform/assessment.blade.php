@@ -126,7 +126,8 @@
         url = dataTarget.getAttribute('data-url')
         var open = '';
         if (url != 'null') {
-            open = '<a href="' + url + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah link pendukung</span><br/><br/> ';
+            // open = '<a href="' + url + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah link pendukung</span><br/><br/> ';
+                open = '<a href="/downloadfiletatanan/' + btoa(id) + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah file pendukung</span><br/><br/> ';
         }
 
         // alert(id);
@@ -135,7 +136,9 @@
         html = `
                 <input id="idevidence" type="hidden" name="id" value="`+id+`">
                 `+open+`
-                <input id="urlevidence" type="url" class="form-control" name="url" id="url" placeholder="Masukan url">`;
+                <input id="urlevidence" type="file" class="form-control" name="urlevidence">`;
+                // <input id="urlevidence" type="url" class="form-control" name="url" id="url" placeholder="Masukan url">;
+
         $('#info_url').html(html);
         $('#urlinfo').modal('show');
     });
@@ -158,8 +161,14 @@
 
     });
     $('body').on('click', '.submitevidence', function (e) {
-        id = $('#idevidence').val();
-        url = $('#urlevidence').val();
+
+        // id = $('#idevidence').val();
+        // url = $('#urlevidence').val();
+        var fileData = new FormData();
+        fileData.append('file', $('#urlevidence')[0].files[0]);
+        fileData.append('id', $('#idevidence').val());
+        var id = $('#idevidence').val();
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
         if (url == '') {
             Swal.fire({
@@ -167,33 +176,53 @@
                 icon: "warning",
                 text: "Data tidak boleh kosong",
             });
-        }else if(!url.match(/^(http|https):\/\/[^ "]+$/)){
-            Swal.fire({
-                title: "Perhatian!",
-                icon: "warning",
-                text: "Url tidak valid",
-            });
         }else{
-            var postData = {
-                id: id,
-                linkPendukung: url
-            };
-            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            // var postData = {
+            //     id: id,
+            //     linkPendukung: url
+            // };
+            // var csrfToken = $('meta[name="csrf-token"]').attr('content');
+            // $.ajax({
+            //     url: '/pengisianform/updatelink', // Ganti dengan URL endpoint yang sesuai di server Anda
+            //     type: 'POST',
+            //     headers: {
+            //         'X-CSRF-TOKEN': csrfToken
+            //     },
+            //     data: postData,
+            //     processData: false, // Tambahkan ini agar FormData tidak diproses
+            //     contentType: false, // Tambahkan ini agar FormData tidak diproses
+            //     success: function(response) {
+            //         // init();
+            //         Swal.fire({
+            //             title: "Berhasil!",
+            //             icon: "success",
+            //             text: "Data Berhasil di upload",
+            //         });               // Tutup modal update
+            //         init();
+            //         $('#urlevidence').val('');
+            //         $('#urlinfo').modal('hide');
+
+            //     },
+            //     error: function(xhr, status, error) {
+            //         console.log(error);
+            //     }
+            // });
             $.ajax({
-                url: '/pengisianform/updatelink', // Ganti dengan URL endpoint yang sesuai di server Anda
+                url: '/pengisianform/updatelink',
                 type: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
                 },
-                data: postData,
+                data: fileData,
+                processData: false, // Tambahkan ini agar FormData tidak diproses
+                contentType: false, // Tambahkan ini agar FormData tidak diproses
                 success: function(response) {
-                    // init();
+                    init();
                     Swal.fire({
                         title: "Berhasil!",
                         icon: "success",
                         text: "Data Berhasil di upload",
-                    });               // Tutup modal update
-                    init();
+                    });
                     $('#urlevidence').val('');
                     $('#urlinfo').modal('hide');
 
@@ -233,7 +262,7 @@
                 // Loop melalui data yang diterima dan tambahkan ke dalam tabel
                 $.each(response, function(index, item) {
 
-                    var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Link</a>';
+                    var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Upload</a>';
                     var jawaban = '';
 
                     // Periksa apakah jawaban_a ada

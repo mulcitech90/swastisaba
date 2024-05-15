@@ -120,7 +120,7 @@
         url = dataTarget.getAttribute('data-url')
         var open = '';
         if (url != 'null') {
-            open = '<a href="/pengisianform/downloadfile/' + btoa(id) + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah file pendukung</span><br/><br/> ';
+            open = '<a href="/downloadfile/' + btoa(id) + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah file pendukung</span><br/><br/> ';
         }
 
         // alert(id);

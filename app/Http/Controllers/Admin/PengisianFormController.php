@@ -93,8 +93,14 @@ class PengisianFormController extends Controller
     public function updatelink(Request $request)
     {
         try {
+            $file = $request->file('file');
+            $validated = $request->validate([
+                'file' => 'required|max:2048',
+            ]);
+            $filePath = $file->store('uploads');
+
             $result = TrxPertanyaan::where('id', $request->id)->first();
-            $result->file = $request->linkPendukung;
+            $result->file =$filePath;
             $result->update();
 
             return response()->json($result);
@@ -123,6 +129,16 @@ class PengisianFormController extends Controller
             return response()->json(['message' => $th->getMessage()], 400);
         }
 
+    }
+    public function downloadfileTatanan($id)
+    {
+        try {
+            $id_ = (base64_decode($id));
+            $result = TrxPertanyaan::where('id', $id_)->first();
+            return Storage::download($result->file);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 400);
+        }
     }
     public function downloadfile($id)
     {

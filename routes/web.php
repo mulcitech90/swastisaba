@@ -30,6 +30,10 @@ use App\Http\Controllers\Admin\PelaporanController;
 Auth::routes();
 
 // Rute-rute lain menggunakan LoginRegisterController
+Route::get('/downloadfile/{id}', [PengisianFormController::class, 'downloadfile']);
+Route::get('/downloadfiletatanan/{id}', [PengisianFormController::class, 'downloadfileTatanan']);
+
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'dashboard_admin'])->name('dashboard'); //dashboard admin
     Route::get('/homepage', [DashboardController::class, 'dashboard_pemda'])->name('dashboard.pemda'); //dashboard pemda
@@ -105,7 +109,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/submitpengisian', [PengisianFormController::class,'submitpengisian'])->name('pengisianform.submitpengisian');
         Route::post('/uploadfile', [PengisianFormController::class, 'uploadfile'])->name('pengisianform.uploadfile');
         Route::post('/start', [PengisianFormController::class, 'start'])->name('pengisianform.start');
-        Route::get('/downloadfile/{id}', [PengisianFormController::class, 'downloadfile']);
     });
     // validator
     Route::prefix('validator')->group(function () {
