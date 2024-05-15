@@ -17,6 +17,35 @@ use Illuminate\Support\Facades\Storage;
 
 class PelaporanController extends Controller
 {
+    // PelaporanController
+    public function pelaporanLembaga(Request $request){
+        $periodeId = $request->input('periode_id');
+        if (!$periodeId) {
+            $periodeId = DB::table('periode')->latest('id')->value('id');
+        }
+        $data_main = DB::table('trx_main')
+                    ->when($periodeId, function ($query, $periodeId) {
+                        return $query->where('id_periode', $periodeId);
+                    })
+                    ->get();
+        $lembaga = TrxKelembagaan::where('id_periode', $periodeId)->get();
+        $result=[];
+        foreach ($data_main as $key => $dm) {
+            $soal= DB::table('trx_pertanyaan_lembaga')->join('trx_kelembagaan', 'trx_kelembagaan.id',  '=', 'trx_pertanyaan_lembaga.id_kelembagaan')
+                        ->select('trx_pertanyaan_lembaga.*', 'trx_kelembagaan.nama_kelembagaan')
+                        ->where('trx_pertanyaan_lembaga.id_periode', $periodeId)
+                        ->where('trx_pertanyaan_lembaga.user_id', $dm->id_user)
+                        ->get();
+            $result[] = [
+                'soal' =>$soal,
+                'wilayah' => $this->UserName($dm->id) // Menyertakan data wilayah
+            ];
+        }
+        // dd($result);
+        $periode_list = Periode::all();
+        return view('admin.pelaporan.lembaga',compact('periode_list', 'result', 'periodeId'));
+    }
+
     public function pelaporan(Request $request)
     {
         $periodeId = $request->input('periode_id');

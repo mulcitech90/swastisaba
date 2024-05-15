@@ -31,11 +31,13 @@
                     <span>Filter :</span>
                     <!--begin::Select-->
                     <div class="me-6 my-1">
-                        <select id="kt_filter_orders" name="orders" data-control="select2" data-hide-search="true" class="form-select form-select-solid form-select-sm">
-                           @foreach ($periode_list as $item)
-                            <option value="{{ $item->id }}" {{$item->id == $periodeId ? 'selected':''}}>{{ $item->periode }}</option>
-                           @endforeach
-                        </select>
+                        <form method="GET" action="{{ route('dashboard.dinas') }}"> <!-- Ganti dengan route yang sesuai -->
+                            <select id="kt_filter_orders" name="periode_id" data-control="select2" data-hide-search="true" class="form-select form-select-solid form-select-sm" onchange="this.form.submit()">
+                                @foreach ($periode_list as $item)
+                                    <option value="{{ $item->id }}" {{ $item->id == $periodeId ? 'selected' : '' }}>{{ $item->periode }}</option>
+                                @endforeach
+                            </select>
+                        </form>
                     </div>
                     <!--end::Select-->
 

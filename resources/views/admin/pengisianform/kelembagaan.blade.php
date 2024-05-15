@@ -211,14 +211,14 @@
 
                     // Periksa apakah jawaban_a ada
                     if(item.jawaban_a) {
-                        var checkedA = item.jawaban === 'a' ? 'checked' : '';
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="a" value="'+item.nilai_a+'" ' + checkedA + ' > '+item.jawaban_a + '<br><br>';
+                        var checkedA = item.jawaban === 'Ada' ? 'checked' : '';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="Ada" value="'+item.nilai_a+'" ' + checkedA + ' > '+item.jawaban_a + '<br><br>';
                     }
 
                     // Periksa apakah jawaban_b ada
                     if(item.jawaban_b) {
-                        var checkedB = item.jawaban === 'b' ? 'checked' : '';
-                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="b" value="'+item.nilai_b+'" ' + checkedB + '> '+item.jawaban_b + '<br><br>';
+                        var checkedB = item.jawaban === 'Tidak ada' ? 'checked' : '';
+                        jawaban += '<input type="radio" class="form-check-input jawaban" name="'+item.id+'" data-id="'+item.id+'" data-jwb="Tidak ada" value="'+item.nilai_b+'" ' + checkedB + '> '+item.jawaban_b + '<br><br>';
                     }
 
 

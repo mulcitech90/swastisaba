@@ -126,75 +126,21 @@ class DashboardController extends Controller
         $periode_list = Periode::All();
         return view('admin.dashboard', compact('data_pertatanan', 'wilayahs', 'tatanan_averages', 'periode_list', 'periodeId'));
     }
-    public function dashboard_pemda()
+    public function dashboard_pemda(Request $request)
     {
-        // $data_main = DB::table('trx_main')
-        // ->where('id_user', '=', Auth::user()->id)
-        // ->get();
+        $periodeId = $request->input('periode_id');
 
-        // $data_pertatanan = [];
-        // $totalNilai = 0;
-        // $totalSoal = 0;
+        if (!$periodeId) {
+            // Ambil periode terakhir jika tidak ada inputan
+            $periodeId = DB::table('periode')->latest('id')->value('id');
+        }
 
-        // foreach ($data_main as $main) {
-        // $data_tatanan = TrxTatanan::where('id_periode', '=', $main->id_periode)->get();
-        // foreach ($data_tatanan as $key => $value) {
-        //     $data_score_tatanan = DB::table('trx_score')
-        //         ->where('id_main', '=', $main->id)
-        //         ->where('id_periode', '=', $main->id_periode)
-        //         ->where('id_tatanan', '=', $value->id_tatanan)
-        //         ->sum('nilai');
-
-        //     $data_total_soal = TrxPertanyaan::where('id_main', '=', $main->id)
-        //         ->where('id_periode', '=', $main->id_periode)
-        //         ->where('tatanan_id', '=', $value->id_tatanan)
-        //         ->count();
-
-        //     if ($data_total_soal > 0) {
-        //         $rataRataNilai = $data_score_tatanan / $data_total_soal;
-        //     } else {
-        //         $rataRataNilai = 0;
-        //     }
-
-        //     $data_pertatanan[] = [
-        //         'idTatanan' => $value->id,
-        //         'totalSoal' => $data_total_soal,
-        //         'nilai' => $data_score_tatanan,
-        //         'nilairata2' => $rataRataNilai
-        //     ];
-
-        //     // Akumulasi nilai dan jumlah soal untuk perhitungan rata-rata global
-        //     $totalNilai += $data_score_tatanan;
-        //     $totalSoal += $data_total_soal;
-        // }
-        // }
-
-        // // Menghitung rata-rata global dari semua tatanan
-        // $rataRataGlobal = 0;
-        // if ($totalSoal > 0) {
-        // $rataRataGlobal = $totalNilai / $totalSoal;
-        // }
-        // $kategori = '';
-        // if ($rataRataGlobal > 0 && $rataRataGlobal < 71) {
-        //     $kategori = 'Tidak Lolos';
-        // } elseif ($rataRataGlobal >= 71 && $rataRataGlobal < 81) {
-        //     $kategori = 'PADAPA';
-        // } elseif ($rataRataGlobal >= 81 && $rataRataGlobal < 91) {
-        //     $kategori = 'WIWERDA';
-        // } elseif ($rataRataGlobal >= 91 && $rataRataGlobal <= 100) {
-        //     $kategori = 'WISTARA';
-        // }
-        // $result = [
-        //             'data_pertatanan' => $data_pertatanan,
-        //             'rataRataGlobal' => $rataRataGlobal,
-        //             'totalnilai' =>  $totalNilai,
-        //             'totalSoal' => $totalSoal,
-        //             'kategori' => $kategori,
-        //         ];
-       // Proses yang telah Anda lakukan sebelumnya
         $data_main = DB::table('trx_main')
-        ->where('id_user', '=', Auth::user()->id)
-        ->get();
+            ->where('id_user', '=', Auth::user()->id)
+            ->when($periodeId, function ($query, $periodeId) {
+                return $query->where('id_periode', $periodeId);
+            })
+            ->get();
 
         $data_pertatanan = [];
         $totalNilai = 0;
@@ -263,7 +209,8 @@ class DashboardController extends Controller
         foreach ($data_pertatanan as &$wilayah) {
             $wilayah['kategori'] = $kategori;
         }
-        return view('admin.dashboard-pemda',compact('data_pertatanan', 'rataRataGlobal', 'kategori'));
+        $periode_list = Periode::All();
+        return view('admin.dashboard-pemda',compact('data_pertatanan', 'rataRataGlobal', 'kategori','periode_list', 'periodeId'));
     }
     public function dashboard_dinas(Request $request)
     {

@@ -17,8 +17,8 @@
             <!--begin::Card header-->
             <div class="card-header">
                 <h3 class="card-title align-items-start flex-column">
-                    <span class="card-label fw-bold text-gray-900">Daftar Periode dan Instrumen Penilaian</span>
-                    <span class="text-muted mt-1 fw-semibold fs-7">{{$periode ? $periode->periode : '-' }}</span>
+                    <span class="card-label fw-bold text-gray-900">Instrumen Penilaian</span>
+                    <span class="text-muted mt-1 fw-bold text-gray-600 fs-4">Tahun-{{$periode ? $periode->periode : '-' }}</span>
                     <input type="hidden" name="periode_id" id="periode_id" value="{{$periode->id }}">
                 </h3>
             </div>

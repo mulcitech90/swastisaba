@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\PeriodeController;
 use App\Http\Controllers\Admin\PengisianFormController;
 use App\Http\Controllers\Admin\ValidatorController;
 use App\Http\Controllers\Admin\PelaporanController;
+use App\Http\Controllers\Admin\PenggunaController;
+
 
 
 
@@ -135,7 +137,14 @@ Route::middleware('auth')->group(function () {
     });
     Route::prefix('pelaporan')->group(function () {
         Route::get('/tatanan', [PelaporanController::class, 'pelaporan'])->name('pelaporan.tatanan');
-        Route::get('/lembaga', [PelaporanController::class, 'pelaporan'])->name('pelaporan.lembaga');
+        Route::get('/lembaga', [PelaporanController::class, 'pelaporanLembaga'])->name('pelaporan.lembaga');
+    });
+    Route::prefix('setting')->group(function () {
+        Route::get('/user', [PenggunaController::class, 'index'])->name('setting.users');
+        Route::post('/user/store', [PenggunaController::class, 'store'])->name('setting.store');
+        Route::get('/user/{id}/edit', [PenggunaController::class, 'edit'])->name('setting.edit');
+        Route::post('/user/{id}/update', [PenggunaController::class, 'update'])->name('setting.update');
+        Route::get('/user/{id}/delete', [PenggunaController::class, 'delete'])->name('setting.delete');
     });
 
 

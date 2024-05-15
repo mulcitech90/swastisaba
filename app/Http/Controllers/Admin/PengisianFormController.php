@@ -38,14 +38,20 @@ class PengisianFormController extends Controller
     public function periode_tatanan()
     {
         $data = DB::table('trx_main')
-        ->where('id_user', '=', Auth::user()->id)
+        ->join('periode', 'periode.id', '=', 'trx_main.id_periode')
+        ->join('periode_main', 'periode.id_main_periode', '=', 'periode_main.id')
+        ->select('trx_main.*', 'periode_main.periode as periode_name', 'periode.status as status_akses')
+        ->where('trx_main.id_user', '=', Auth::user()->id)
         ->get();
         return view('admin.pengisianform.tatanan',compact('data'));
     }
     public function periode_lembaga()
     {
         $data = DB::table('trx_main')
-        ->where('id_user', '=', Auth::user()->id)
+        ->join('periode', 'periode.id', '=', 'trx_main.id_periode')
+        ->join('periode_main', 'periode.id_main_periode', '=', 'periode_main.id')
+        ->select('trx_main.*', 'periode_main.periode as periode_name', 'periode.status as status_akses')
+        ->where('trx_main.id_user', '=', Auth::user()->id)
         ->get();
         return view('admin.pengisianform.lembaga',compact('data'));
     }

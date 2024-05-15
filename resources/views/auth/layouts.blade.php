@@ -107,7 +107,7 @@
 													<a class="nav-link {{ Request::is('master/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_6">Master</a>
 												</li>
                                                 <li class="nav-item">
-													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_7">Setting</a>
+													<a class="nav-link {{ Request::is('setting/*') ? 'active' : '' }}"" data-bs-toggle="tab" href="#kt_header_navs_tab_7">Setting</a>
 												</li>
                                                 @endif
 											</ul>
@@ -244,14 +244,7 @@
 										</div>
 										<!--end::Tab panel-->
 
-                                        <!--begin::Tab panel-->
-										<div class="tab-pane fade" id="kt_header_navs_tab_7">
-											<!--begin::Wrapper-->
-											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
 
-											</div>
-											<!--end::Wrapper-->
-										</div>
 										<!--end::Tab panel-->
                                         @endif
                                         @if (Auth::user()->role == 'admin')
@@ -310,10 +303,10 @@
 										</div>
 										<!--end::Tab panel-->
                                         <!--begin::Tab panel-->
-										<div class="tab-pane fade" id="kt_header_navs_tab_7">
+										<div class="tab-pane fade {{ Request::is('setting/*') ? 'active show' : '' }}" id="kt_header_navs_tab_7">
 											<!--begin::Wrapper-->
 											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
-
+                                                <a class="btn btn-sm btn-light-success fw-bold"  href="{{ route('setting.users') }}">User Management</a>
 											</div>
 											<!--end::Wrapper-->
 										</div>

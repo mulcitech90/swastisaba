@@ -18,7 +18,6 @@
             <div class="card-header">
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold text-gray-900">Daftar Periode dan Instrumen Penilaian</span>
-                    <span class="text-muted mt-1 fw-semibold fs-7">-</span>
                 </h3>
             </div>
             <!--end::Card header-->
@@ -29,55 +28,49 @@
                     <table id="kt_datatable_fixed_header" class="table table-striped table-row-bordered gy-5 gs-7">
                         <thead>
                             <tr class="fw-semibold fs-6 text-gray-800">
-                                <th>No</th>
                                 <th>Periode</th>
+                                <th>Tahun</th>
                                 <th class="text-center">Jumlah Tatanan</th>
                                 <th class="text-center">Jumlah Soal</th>
-                                {{-- <th class="text-center">Jumlah Terjawab</th> --}}
-                                <th class="text-center">Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                            $prevPeriode = null; // Variabel untuk menyimpan nilai periode sebelumnya
+                            @endphp
+
                             @forelse ($data as $item)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->tahun_periode }}</td>
-                                <td class="text-center">{{CountSoal($item->id_periode, 'jumlahtatanan')}}</td>
-                                <td class="text-center">{{CountSoal($item->id_periode, 'jumlahsoal')}}</td>
-                                <td class="text-center">
-                                    @if ($item->status == 'Belum mengisi')
-                                        <span  class="badge badge-light-info ">Belum mengisi</span>
-                                    @elseif($item->status == 'Dalam Pengisian')
-                                        <span  class="badge badge-light-primary ">Dalam Pengisian</span>
-                                    @elseif($item->status == 'Verifikasi')
-                                        <span  class="badge badge-secondary ">Verifikasi</span>
-                                    @elseif($item->status == 'Revisi')
-                                        <span  class="badge badge-light-warning ">Revisi</span>
-                                    @elseif($item->status == 'Selesai')
-                                        <span  class="badge badge-light-success ">Selesai</span>
-                                    @endif
-                                </td>
+                                @if ($item->periode_name != $prevPeriode)
+                                    <tr>
+                                        <td colspan="6">{{ $item->periode_name }}</td>
+                                        @php $prevPeriode = $item->periode_name @endphp
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <td></td>
+                                    <td>{{ $item->tahun_periode }}</td>
+                                    <td class="text-center">{{CountSoal($item->id_periode, 'jumlahtatanan')}}</td>
+                                    <td class="text-center">{{CountSoal($item->id_periode, 'jumlahsoal')}}</td>
+                                    <td>
+                                        <div class="text-center">
+                                            @if ($item->status_akses == 0)
+                                            <a href="#" class="menu-link px-3">
+                                                <span class="badge badge-light-danger fs-9">Belum Aktif</span>
+                                            </a>
+                                            @else
+                                            <a href="#" class="menu-link px-3" onclick="Pengisian({{ $item->id_periode }})">
+                                                <i class="bi bi-clipboard-check"></i> <!-- Ikon Delete -->
+                                            </a>
 
-                                <td>
-                                    <div class="text-center">
-                                        @if ($item->status == 'Selesai')
-                                        <a href="#" class="menu-link px-3">
-                                            <i class="bi bi-eye"></i> <!-- Ikon Delete -->
-                                        </a>
-                                        @else
-                                        <a href="#" class="menu-link px-3" onclick="Pengisian({{ $item->id_periode }})">
-                                            <i class="bi bi-clipboard-check"></i> <!-- Ikon Delete -->
-                                        </a>
-
-                                        @endif
-                                   </div>
-                                </td>
-                            </tr>
+                                            @endif
+                                       </div>
+                                    </td>
+                                </tr>
                             @empty
-                            <tr>
-                                <td colspan="3">Data tidak ditemukan</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="6">Data tidak ditemukan</td>
+                                </tr>
                             @endforelse
 
                         </tbody>

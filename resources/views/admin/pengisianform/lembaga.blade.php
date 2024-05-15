@@ -29,16 +29,15 @@
                     <table id="kt_datatable_fixed_header" class="table table-striped table-row-bordered gy-5 gs-7">
                         <thead>
                             <tr class="fw-semibold fs-6 text-gray-800">
-                                <th>No</th>
                                 <th>Periode</th>
+                                <th>Tahun</th>
+                                <th class="text-center">Jumlah Tatanan</th>
                                 <th class="text-center">Jumlah Soal</th>
-                                {{-- <th>Soal Terjawab</th> --}}
-                                <th class="text-center">Status</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($data as $item)
+                            {{-- @forelse ($data as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->tahun_periode }}</td>
@@ -69,7 +68,44 @@
                             <tr>
                                 <td colspan="3">Data tidak ditemukan</td>
                             </tr>
+                            @endforelse --}}
+                            @php
+                            $prevPeriode = null; // Variabel untuk menyimpan nilai periode sebelumnya
+                            @endphp
+
+                            @forelse ($data as $item)
+                                @if ($item->periode_name != $prevPeriode)
+                                    <tr>
+                                        <td colspan="6">{{ $item->periode_name }}</td>
+                                        @php $prevPeriode = $item->periode_name @endphp
+                                    </tr>
+                                @endif
+                                <tr>
+                                    <td></td>
+                                    <td>{{ $item->tahun_periode }}</td>
+                                    <td class="text-center">{{CountSoal($item->id_periode, 'jumlahtatanan')}}</td>
+                                    <td class="text-center">{{CountSoal($item->id_periode, 'jumlahsoal')}}</td>
+                                    <td>
+                                        <div class="text-center">
+                                            @if ($item->status_akses == 0)
+                                            <a href="#" class="menu-link px-3">
+                                                <span class="badge badge-light-danger fs-9">Belum Aktif</span>
+                                            </a>
+                                            @else
+                                            <a href="#" class="menu-link px-3" onclick="Pengisian({{ $item->id_periode }})">
+                                                <i class="bi bi-clipboard-check"></i> <!-- Ikon Delete -->
+                                            </a>
+
+                                            @endif
+                                       </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6">Data tidak ditemukan</td>
+                                </tr>
                             @endforelse
+
 
                         </tbody>
                     </table>

@@ -71,10 +71,10 @@ class ValidatorController extends Controller
         }
         return response()->json($result);
     }
-    public function pertanyaanlembaga($periode)
+    public function pertanyaanlembaga(Request $request, $periode)
     {
         $result = TrxPertanyaanLembaga::where('id_periode', $periode)
-        ->where('user_id', Auth::user()->id)
+        ->where('user_id', $request->user)
         ->get();
         $lembaga = TrxKelembagaan::where('id_periode', $periode)->get();
         foreach ($lembaga as $key => $ta) {
@@ -83,6 +83,7 @@ class ValidatorController extends Controller
         }
         return response()->json($result);
     }
+
     public function assessment(Request $request, $id)
     {
         $id_ = (base64_decode($id));

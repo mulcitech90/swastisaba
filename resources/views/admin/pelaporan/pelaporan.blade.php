@@ -8,15 +8,6 @@
 <div id="kt_content_container" class="d-flex flex-column-fluid align-items-start container-xxl">
     <!--begin::Post-->
     <div class="content flex-row-fluid" id="kt_content">
-        @if ($message = Session::get('success'))
-        <div class="alert alert-success">
-            {{ $message }}
-        </div>
-    @else
-        <div class="alert alert-success">
-            You are logged in!
-        </div>
-    @endif
         <!--begin::Table-->
         <div class="card card-flush mt-6 mt-xl-9">
             <!--begin::Card header-->
@@ -32,12 +23,13 @@
                     <span>Filter :</span>
                     <!--begin::Select-->
                     <div class="me-6 my-1">
-                        <select id="kt_filter_orders" name="orders" data-control="select2" data-hide-search="true" class="form-select form-select-solid form-select-sm">
-                            @foreach ($periode_list as $item)
-                            <option value="{{ $item->id }}" {{$item->id == $periodeId ? 'selected':''}}>{{ $item->periode }}</option>
-                           @endforeach
-
-                        </select>
+                        <form method="GET" action="{{ route('pelaporan.tatanan') }}"> <!-- Ganti dengan route yang sesuai -->
+                            <select id="kt_filter_orders" name="periode_id" data-control="select2" data-hide-search="true" class="form-select form-select-solid form-select-sm" onchange="this.form.submit()">
+                                @foreach ($periode_list as $item)
+                                    <option value="{{ $item->id }}" {{ $item->id == $periodeId ? 'selected' : '' }}>{{ $item->periode }}</option>
+                                @endforeach
+                            </select>
+                        </form>
                     </div>
                     <!--end::Select-->
 

@@ -18,7 +18,7 @@
             <div class="card-header">
                 <h3 class="card-title align-items-start flex-column">
                     <span class="card-label fw-bold text-gray-900">Daftar Assesment Tatanan</span>
-                    <span class="text-muted mt-1 fw-semibold fs-7">-</span>
+                    {{-- <span class="text-muted mt-1 fw-semibold fs-7">-</span> --}}
                 </h3>
                 <div class="card-toolbar">
                     <a href="#" class="btn btn-success" onclick="showTambahModal()"><i class="ki-duotone ki-plus fs-2"></i>Tambah Periode</a>
@@ -32,50 +32,64 @@
                     <table id="kt_datatable_fixed_header" class="table table-striped table-row-bordered gy-5 gs-7">
                         <thead>
                             <tr class="fw-semibold fs-6 text-gray-800">
-                                <th>No</th>
                                 <th>Periode</th>
+                                <th>Tahun</th>
                                 <th class="text-center">Jumlah Tatanan</th>
-                                <th>Status</th>
-                                <th>Assesment Kelembagaan</th>
-                                <th class="text-center">Aksi</th>
+                                <th >Status</th>
+                                <th >Assesment Kelembagaan</th>
+                                {{-- <th class="text-center">Aksi</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($data as $item)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $item->periode }}</td>
-                                <td class="text-center">9</td>
-                                <td>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input switchButton" type="checkbox" id="switchButton{{ $loop->index }}" data-id="{{ $item->id }}" @if($item->status == 1) checked @endif>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input switchButtonLembaga" type="checkbox" id="switchButtonLembaga{{ $loop->index }}" data-id="{{ $item->id }}" @if($item->status_lembaga == 1) checked @endif>
-                                    </div>
-                                </td>
-                                <td>
-                                  <div class="text-center">
-                                    @if($item->status == 0)
-                                        <a href="#" class="menu-link px-3" onclick="deletePeriode({{ $item->id }})">
-                                            <i class="bi bi-trash"></i> <!-- Ikon Delete -->
-                                        </a>
-                                    @endif
-                                    </div>
-                                    <!--end::Menu-->
-                                </td>
-                            </tr>
-                            @empty
-                            <tr>
-                                <td colspan="6">Data tidak ditemukan</td>
-                            </tr>
-                            @endforelse
+                            @php
+                                $prevPeriode = null; // Variabel untuk menyimpan nilai periode sebelumnya
+                            @endphp
 
+                            @forelse ($data as $item)
+                                {{-- Tampilkan periode_name hanya untuk entri pertama dengan nilai periode yang berbeda --}}
+                                @if ($item->periode_name != $prevPeriode)
+                                    <tr>
+                                        <td colspan="6">{{ $item->periode_name }}</td>
+                                        {{-- Set nilai periode sebelumnya menjadi periode saat ini --}}
+                                        @php $prevPeriode = $item->periode_name @endphp
+                                    </tr>
+                                @endif
+
+                                {{-- Bagian dari data yang berulang --}}
+                                <tr>
+                                    <td></td>
+                                    <td>{{ $item->periode }}</td>
+                                    <td class="text-center">9</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input switchButton" type="checkbox" id="switchButton{{ $loop->index }}" data-id="{{ $item->id }}" @if($item->status == 1) checked @endif>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input switchButtonLembaga" type="checkbox" id="switchButtonLembaga{{ $loop->index }}" data-id="{{ $item->id }}" @if($item->status_lembaga == 1) checked @endif>
+                                        </div>
+                                    </td>
+                                    {{-- Tambahkan bagian ini jika ingin menambahkan tombol delete --}}
+                                    {{-- <td>
+                                        <div class="text-center">
+                                            @if($item->status == 0)
+                                                <a href="#" class="menu-link px-3" onclick="deletePeriode({{ $item->id }})">
+                                                    <i class="bi bi-trash"></i> <!-- Ikon Delete -->
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </td> --}}
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6">Data tidak ditemukan</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
+
                 <!--end::Card-->
             </div>
             <!--end::Card body-->
@@ -130,39 +144,38 @@
     });
 </script>
 <script>
-
-    function deletePeriode(periodeId) {
-        swal({
-            title: "Konfirmasi",
-            text: "Apakah Anda yakin akan menghapus periode ini?",
-            icon: "warning",
-            buttons: {
-                cancel: "Batal",
-                confirm: "Ya, Hapus"
-            },
-            dangerMode: true,
-        })
-        .then((willDelete) => {
-            if (willDelete) {
-                // Kirim permintaan Ajax untuk menghapus periode
-                $.ajax({
-                    url: '/periode/tatanan/' + periodeId + '/delete',
-                    method: 'get',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                    },
-                    success: function(response) {
-                        swal("Sukses!", "Periode berhasil dihapus", "success");
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(error);
-                        swal("Oops!", "Terjadi kesalahan saat menghapus periode", "error");
-                    }
-                });
-            }
-        });
-    }
+    // function deletePeriode(periodeId) {
+    //     swal({
+    //         title: "Konfirmasi",
+    //         text: "Apakah Anda yakin akan menghapus periode ini?",
+    //         icon: "warning",
+    //         buttons: {
+    //             cancel: "Batal",
+    //             confirm: "Ya, Hapus"
+    //         },
+    //         dangerMode: true,
+    //     })
+    //     .then((willDelete) => {
+    //         if (willDelete) {
+    //             // Kirim permintaan Ajax untuk menghapus periode
+    //             $.ajax({
+    //                 url: '/periode/tatanan/' + periodeId + '/delete',
+    //                 method: 'get',
+    //                 data: {
+    //                     _token: '{{ csrf_token() }}',
+    //                 },
+    //                 success: function(response) {
+    //                     swal("Sukses!", "Periode berhasil dihapus", "success");
+    //                     location.reload();
+    //                 },
+    //                 error: function(xhr, status, error) {
+    //                     console.error(error);
+    //                     swal("Oops!", "Terjadi kesalahan saat menghapus periode", "error");
+    //                 }
+    //             });
+    //         }
+    //     });
+    // }
     // Fungsi untuk menampilkan modal Tambah Periode
     function showTambahModal() {
         $('#modalTambahPeriode').modal('show');
@@ -170,6 +183,7 @@
 
     // Fungsi untuk menyimpan periode baru
     function simpanPeriode() {
+        $('#loader').show();
         var start = $('#inputPeriodeStart').val();
         var end = $('#inputPeriodeEnd').val();
 
@@ -187,7 +201,8 @@
                 end: end,
             },
             success: function(response) {
-                var data = JSON.parse(response);
+                $('#loader').hide();
+                var data = response;
                 if (data.error){
                     swal("Oops!", data.message, "error");
                 }else{
@@ -196,6 +211,7 @@
                 }
             },
             error: function(xhr, status, error) {
+                $('#loader').hide();
                 swal("Oops!", "Terjadi kesalahan: " + xhr.responseText, "error");
             }
         });
