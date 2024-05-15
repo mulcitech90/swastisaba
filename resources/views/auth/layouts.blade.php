@@ -81,9 +81,6 @@
 												<li class="nav-item">
 													<a class="nav-link {{ Request::is('pengisianform/*') ? 'active' : '' }}""  data-bs-toggle="tab" href="#kt_header_navs_tab_2">Intrument Penilaian</a>
 												</li>
-                                                <li class="nav-item">
-													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
-												</li>
                                                 @endif
                                                 @if (Auth::user()->role == 'dinas')
                                                 <li class="nav-item">
@@ -92,8 +89,8 @@
                                                 <li class="nav-item">
 													<a class="nav-link {{ Request::is('validator') || Request::is('validator/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_4">Validasi</a>
 												</li>
-												<li class="nav-item">
-													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
+                                                <li class="nav-item">
+													<a class="nav-link  {{ Request::is('pelaporan/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
 												</li>
                                                 @endif
                                                 @if (Auth::user()->role == 'admin')
@@ -104,7 +101,7 @@
 													<a class="nav-link {{ Request::is('periode/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_3">Assesment</a>
 												</li>
                                                 <li class="nav-item">
-													<a class="nav-link" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
+													<a class="nav-link  {{ Request::is('pelaporan/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_5">Pelaporan</a>
 												</li>
                                                 <li class="nav-item">
 													<a class="nav-link {{ Request::is('master/*') ? 'active' : '' }}" data-bs-toggle="tab" href="#kt_header_navs_tab_6">Master</a>
@@ -235,10 +232,13 @@
 										</div>
 										<!--end::Tab panel-->
 										<!--begin::Tab panel-->
-										<div class="tab-pane fade" id="kt_header_navs_tab_5">
+										<div class="tab-pane fade {{ Request::is('pelaporan/*') || Request::is('pelaporan') ? 'active show' : '' }}" id="kt_header_navs_tab_5">
 											<!--begin::Wrapper-->
 											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
-
+                                                <div class="d-flex flex-column flex-lg-row gap-2">
+                                                    <a class="btn btn-sm btn-light-success fw-bold"  href="{{ route('pelaporan.tatanan') }}">Tatanan</a>
+                                                    <a class="btn btn-sm btn-light-primary fw-bold"  href="{{ route('pelaporan.lembaga') }}">Kelembagaan</a>
+                                               </div>
 											</div>
 											<!--end::Wrapper-->
 										</div>
@@ -280,10 +280,13 @@
 										</div>
 										<!--end::Tab panel-->
 										<!--begin::Tab panel-->
-										<div class="tab-pane fade" id="kt_header_navs_tab_5">
+										<div class="tab-pane fade {{ Request::is('pelaporan/*') || Request::is('pelaporan') ? 'active show' : '' }}" id="kt_header_navs_tab_5">
 											<!--begin::Wrapper-->
 											<div class="d-flex flex-column flex-lg-row flex-lg-stack flex-wrap gap-2 px-4 px-lg-0">
-
+                                                <div class="d-flex flex-column flex-lg-row gap-2">
+                                                    <a class="btn btn-sm btn-light-success fw-bold"  href="{{ route('pelaporan.tatanan') }}">Tatanan</a>
+                                                    <a class="btn btn-sm btn-light-primary fw-bold"  href="{{ route('pelaporan.lembaga') }}">Kelembagaan</a>
+                                               </div>
 											</div>
 											<!--end::Wrapper-->
 										</div>

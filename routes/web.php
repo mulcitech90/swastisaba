@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\MasterKelembagaanController;
 use App\Http\Controllers\Admin\PeriodeController;
 use App\Http\Controllers\Admin\PengisianFormController;
 use App\Http\Controllers\Admin\ValidatorController;
+use App\Http\Controllers\Admin\PelaporanController;
 
 
 
@@ -128,6 +129,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/start', [ValidatorController::class, 'start'])->name('validator.start');
         Route::get('/downloadfile/{id}', [ValidatorController::class, 'downloadfile']);
 
+    });
+    Route::prefix('pelaporan')->group(function () {
+        Route::get('/tatanan', [PelaporanController::class, 'pelaporan'])->name('pelaporan.tatanan');
+        Route::get('/lembaga', [PelaporanController::class, 'pelaporan'])->name('pelaporan.lembaga');
     });
 
 
