@@ -147,6 +147,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/user/{id}/edit', [PenggunaController::class, 'edit'])->name('setting.edit');
         Route::post('/user/{id}/update', [PenggunaController::class, 'update'])->name('setting.update');
         Route::get('/user/{id}/delete', [PenggunaController::class, 'delete'])->name('setting.delete');
+
+        // Route::get('/users', [UserController::class, 'index'])->name('user.index');
+        // Route::post('/users/store', [UserController::class, 'store'])->name('user.store');
+        // Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
+        // Route::post('/users/{id}/update', [UserController::class, 'update'])->name('user.update');
+        // Route::get('/users/{id}/delete', [UserController::class, 'destroy'])->name('user.delete');
     });
 
 
