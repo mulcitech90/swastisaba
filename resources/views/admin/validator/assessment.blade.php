@@ -44,11 +44,8 @@
 
                         <div class="col-md-8 text-end">
                             <a href={{url('validator')}} class="btn btn-secondary"><span>Kembali</span></a>
-                            <button type="button" class="btn btn-warning revisisoal" id="revisi">
-                                <span>Perbaiki</span>
-                            </button>
                             <button type="button" class="btn btn-success simpansoal" id="simpan">
-                                <span>Setujui</span>
+                                <span>Simpan Validasi</span>
                             </button>
                         </div>
                     </div>
@@ -137,7 +134,8 @@
         url = dataTarget.getAttribute('data-url')
         var open = '';
         if (url != 'null') {
-            open = '<a href="' + url + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah link pendukung</span><br/><br/> ';
+            // open = '<a href="' + url + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah link pendukung</span><br/><br/> ';
+                open = '<a href="/downloadfiletatanan/' + btoa(id) + ' " target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat Link Pendukung</a></br><span class="text-danger">Silahkan upload ulang jika ingin merubah file pendukung</span><br/><br/> ';
         }
 
         // alert(id);
@@ -146,7 +144,9 @@
         html = `
                 <input id="idevidence" type="hidden" name="id" value="`+id+`">
                 `+open+`
-                <input id="urlevidence" type="url" class="form-control" name="url" id="url" placeholder="Masukan url">`;
+                <input id="urlevidence" type="file" class="form-control" name="urlevidence">`;
+                // <input id="urlevidence" type="url" class="form-control" name="url" id="url" placeholder="Masukan url">;
+
         $('#info_url').html(html);
         $('#urlinfo').modal('show');
     });
@@ -168,71 +168,48 @@
             });
 
     });
-    $('body').on('click', '.revisisoal', function (e) {
-        e.preventDefault();
-        Swal.fire({
-                title: "Konfirmasi",
-                icon: "question",
-                text: "Apakah Anda ingin revisi pengisian ini? Setelah disimpan soal akan di isi ulang oleh Pemda !!!",
-                showCancelButton: true,
-                confirmButtonText: "Ya",
-                cancelButtonText: "Tidak",
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    postpertanyaan();
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    Swal.fire("Dibatalkan", "Pengisian tidak disimpan.", "error");
-                }
-            });
-
-    });
     $('body').on('click', '.submitevidence', function (e) {
-        id = $('#idevidence').val();
-        url = $('#urlevidence').val();
 
-        if (url == '') {
-            Swal.fire({
-                title: "Perhatian!",
-                icon: "warning",
-                text: "Data tidak boleh kosong",
-            });
-        }else if(!url.match(/^(http|https):\/\/[^ "]+$/)){
-            Swal.fire({
-                title: "Perhatian!",
-                icon: "warning",
-                text: "Url tidak valid",
-            });
-        }else{
-            var postData = {
-                id: id,
-                linkPendukung: url
-            };
-            var csrfToken = $('meta[name="csrf-token"]').attr('content');
-            $.ajax({
-                url: '/validator/updatelink/', // Ganti dengan URL endpoint yang sesuai di server Anda
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                data: postData,
-                success: function(response) {
-                    init();
+    // id = $('#idevidence').val();
+    // url = $('#urlevidence').val();
+    var fileData = new FormData();
+    fileData.append('file', $('#urlevidence')[0].files[0]);
+    fileData.append('id', $('#idevidence').val());
+    var id = $('#idevidence').val();
+    var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-                    Swal.fire({
-                        title: "Berhasil!",
-                        icon: "success",
-                        text: "Data Berhasil di upload",
-                    });               // Tutup modal update
-                    init();
-                    $('#urlevidence').val('');
-                    $('#urlinfo').modal('hide');
+    if (url == '') {
+        Swal.fire({
+            title: "Perhatian!",
+            icon: "warning",
+            text: "Data tidak boleh kosong",
+        });
+    }else{
+        $.ajax({
+            url: '/pengisianform/updatelink',
+            type: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            data: fileData,
+            processData: false, // Tambahkan ini agar FormData tidak diproses
+            contentType: false, // Tambahkan ini agar FormData tidak diproses
+            success: function(response) {
+                init();
+                Swal.fire({
+                    title: "Berhasil!",
+                    icon: "success",
+                    text: "Data Berhasil di upload",
+                });
+                $('#urlevidence').val('');
+                $('#urlinfo').modal('hide');
 
-                },
-                error: function(xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        }
+            },
+            error: function(xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
     });
 
     // Fungsi untuk memeriksa apakah URL valid
@@ -265,11 +242,12 @@
                 // Loop melalui data yang diterima dan tambahkan ke dalam tabel
                 $.each(response, function(index, item) {
 
-                    if (item.file != null) {
-                        var link = '<a href="/downloadfiletatanan/' + btoa(item.id) + '" target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat</a>';
-                    }else{
-                        var link = '<a href="javascript:void(0)" class="btn btn-danger btn-sm waves-effect waves-float waves-light">Kosong</a>';
-                    }
+                    // if (item.file != null) {
+                    //     var link = '<a href="/downloadfiletatanan/' + btoa(item.id) + '" target="_blank" class="btn btn-primary btn-sm waves-effect waves-float waves-light">Lihat</a>';
+                    // }else{
+                    //     var link = '<a href="javascript:void(0)" class="btn btn-danger btn-sm waves-effect waves-float waves-light">Kosong</a>';
+                    // }
+                    var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Lihat</a ';
 
                     var jawaban = '';
                     var penilaian = '';
@@ -552,15 +530,19 @@
             Swal.fire({
                 title: "Konfirmasi",
                 icon: "question",
-                text: "Anda telah ada di akhir pertanyaan , apakah anda ingin mensetujui pengisian ini?, Jika ingin memperbaiki assesment ini silahkan click button perbaiki",
+                text: "Anda telah ada di akhir pertanyaan , apakah anda ingin mensetujui pengisian ini?",
                 showCancelButton: true,
-                confirmButtonText: "Setujui",
-                cancelButtonText: "Perbaiki",
+                confirmButtonText: "Ya",
+                cancelButtonText: "Tidak",
             }).then((result) => {
                 if (result.isConfirmed) {
                     postpenilaian();
                 } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    postpertanyaan();
+                    Swal.fire({
+                        title: "Perhatian!",
+                        icon: "warning",
+                        text: "Assement tidak simpan",
+                    });
                 }
             }
         );

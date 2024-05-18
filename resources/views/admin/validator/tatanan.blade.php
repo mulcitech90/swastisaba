@@ -49,8 +49,7 @@
                                 <th>Wilayah</th>
                                 <th class="text-center">Periode</th>
                                 <th class="text-center">Jumlah Tatanan</th>
-                                {{-- <th class="text-center">Persentase</th> --}}
-                                {{-- <th class="text-center">Status</th> --}}
+                                <th class="text-center">Status Pengisian</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -65,7 +64,39 @@
         </div>
     </div>
     <!--end::Post-->
+</div>
+<!-- Modal -->
+<div class="modal fade" id="urlinfo" tabindex="-1" aria-labelledby="modalUpdateLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" >
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalUpdateLabel">Pengisian Pertatanan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+                <div class="modal-body">
+                    <table id="kt_datatable_pengisian" class="table table-striped table-row-bordered gy-5 gs-7">
+                        <thead>
+                            <tr class="fw-semibold fs-6 text-gray-800">
+                                <th>No</th>
+                                <th class="text-left">Tatanan</th>
+                                <th class="text-center">Total Soal</th>
+                                <th class="text-center">Sudah Diisi</th>
+                                <th class="text-center">Belum Diisi</th>
+                                <th class="text-center">Disetujui</th>
+                                <th class="text-center">Ditolak</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer" id="footer-s">
+
+                </div>
+
+        </div>
+    </div>
 </div>
 
 @endsection
@@ -94,7 +125,9 @@ $(document).ready(function() {
             type: "GET",
             success: function(response) {
                 $('#kt_datatable_fixed_header tbody').empty();
+
                 $.each(response, function(index, item) {
+                    var pengisian = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light lihatisi" data-id="'+item.id+'"  data-user="'+item.id_user+'" ">'+ item.totalisi +'/'+ item.totalsoal +'</a ';
                     var status = '';
                     if (item.status == 'Belum mengisi') {
                         status = '<span  class="badge badge-light-info ">Belum mengisi</span>';
@@ -114,18 +147,87 @@ $(document).ready(function() {
                             '<td>' + (index + 1) + '</td>' +
                             '<td>' + item.name + '</td>' +
                             '<td class="text-center">' + dataname +'</td>' +
-                            '<td class="text-center">9</td>' +
-                            //'<td class="text-center">'+status+'</td>' +
+                            '<td class="text-center">'+ item.jumlahtatanan +'</td>' +
+                            '<td class="text-center">'+pengisian+'</td>' +
+                            // '<td class="text-center">'+status+'</td>' +
                             '<td class="text-center">'+action+'</td>' +
                         '</tr>'
                     );
+
                 });
+
+
             },
             error: function(xhr) {
                 console.log(xhr);
             }
         });
     }
+    $('body').on('click', '.lihatisi', function (e) {
+        e.preventDefault();
+        let dataTarget = e.target;
+        id = dataTarget.getAttribute('data-id')
+        user_id = dataTarget.getAttribute('data-user');
+        $.ajax({
+            url: "/validator/pengisiansoal/"+id,
+            type: "GET",
+            success: function(response) {
+                $('#footer-s').empty();
+                var tableBody = $('#kt_datatable_pengisian tbody');
+                tableBody.empty(); // Kosongkan isi tabel sebelumnya jika ada
+
+                var total_pertanyaan = 0;
+                var total_dijawab = 0;
+                var total_belumdisi = 0;
+                var total_disetujui = 0;
+                var total_ditolak = 0;
+                var total_belumdiperiksa = 0;
+
+                $.each(response, function(index, data) {
+                    total_pertanyaan += parseInt(data.total_pertanyaan);
+                    total_dijawab += parseInt(data.dijawab);
+                    total_belumdisi += parseInt(data.belumdisi);
+                    total_disetujui += parseInt(data.disetujui);
+                    total_ditolak += parseInt(data.ditolak);
+                    total_belumdiperiksa += parseInt(data.belumdiperiksa);
+
+                    var row = '<tr>' +
+                        '<td>' + (index + 1) + '</td>' +
+                        '<td class="text-left">' + data.nama_tatanan + '</td>' +
+                        '<td class="text-center">' + data.total_pertanyaan + '</td>' +
+                        '<td class="text-center">' + data.dijawab + '</td>' +
+                        '<td class="text-center">' + data.belumdisi + '</td>' +
+                        '<td class="text-center">' + data.disetujui + '</td>' +
+                        '<td class="text-center">' + data.ditolak + '</td>' +
+                    '</tr>';
+                    tableBody.append(row);
+                });
+
+                // Menambahkan baris total di akhir tabel
+                var totalRow = '<tr>' +
+                    '<td colspan="2" class="text-left"><strong>Total</strong></td>' +
+                    '<td class="text-center"><strong>' + total_pertanyaan + '</strong></td>' +
+                    '<td class="text-center"><strong>' + total_dijawab + '</strong></td>' +
+                    '<td class="text-center"><strong>' + total_belumdisi + '</strong></td>' +
+                    '<td class="text-center"><strong>' + total_disetujui + '</strong></td>' +
+                    '<td class="text-center"><strong>' + total_ditolak + '</strong></td>' +
+                '</tr>';
+                tableBody.append(totalRow);
+
+                $('#footer-s').append(
+                    '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>'+
+                    '<a href="/validator/soalvalidasi/'+ btoa(user_id)+'?pr='+ btoa(periode)+'" class="btn btn-primary">Lihat Soal</a>'
+                );
+
+            },
+            error: function(xhr) {
+                console.log(xhr);
+            }
+        });
+
+        $('#urlinfo').modal('show');
+    });
+
 });
 
 </script>

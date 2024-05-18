@@ -62,7 +62,7 @@
                              $rataJawaban = array_fill(0, $jumlahSoal, 0);
                              $jumlahBaris = count($result);
                              @endphp
-                             
+
                              <table id="tableID" class="table table-row-dashed table-row-gray-800 gy-3 fs-8">
                                  <thead>
                                      <tr>
@@ -81,7 +81,7 @@
                                                      $kelembagaanHeaders[$soal->nama_kelembagaan][] = $soal->pertanyaan;
                                                  }
                                              @endphp
-                             
+
                                              @foreach($kelembagaanHeaders as $nama_kelembagaan => $pertanyaans)
                                                  <th colspan="{{ count($pertanyaans) * 3 }}" class="text-center">{{ $nama_kelembagaan }}</th>
                                              @endforeach
@@ -118,7 +118,7 @@
                                                      @php
                                                          $rataJawaban[$index]++;
                                                      @endphp
-                                                 @elseif($soal->jawaban == 'Tidak Ada')
+                                                 @elseif($soal->jawaban == 'Tidak ada')
                                                      <td></td>
                                                      <td>{{$soal->jawaban}}</td>
                                                  @endif
@@ -141,7 +141,7 @@
                                      </tr>
                                  </tfoot>
                              </table>
-                             
+
                         </div>
 
                     <!--end::Table-->

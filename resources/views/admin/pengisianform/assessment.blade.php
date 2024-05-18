@@ -234,12 +234,12 @@
                 $.each(response, function(index, item) {
                     var cacatan = '';
                     var note  = '';
-                    var disabledA = item.status === 1 ? 'disabled' : '';
-                    var linkss = item.status === 1 ? '' : 'tambahurl';
+                    var disabledA = item.status === "1" ? 'disabled' : '';
+                    var linkss = item.status === "1" ? '' : 'tambahurl';
 
-                    if ( item.status === 1) {
+                    if ( item.status === "1") {
                         var link = '<a href="javascript:void(0)" class="btn btn-success btn-sm waves-effect waves-float waves-light " >Disetujui</a>';
-                    }else if(item.status === 2){
+                    }else if(item.status === "2"){
                         cacatan = item.cacatan == null ? '' : item.cacatan ;
                         note = '<span class="text-danger fs-7 fw-bold">(Perbaikan)</span>';
                         var link = '<a href="javascript:void(0)" class="btn btn-primary btn-sm waves-effect waves-float waves-light tambahurl" data-id="'+item.id+'" data-url="'+item.file+'">Upload</a ';

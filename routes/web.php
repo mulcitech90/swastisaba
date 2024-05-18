@@ -117,12 +117,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [ValidatorController::class, 'validator_periode'])->name('validator.periode');
         Route::get('/pemdalist/{id}', [ValidatorController::class, 'pemda_list'])->name('validator.pemdalist');
         Route::get('/assessment/{id}', [ValidatorController::class, 'assessment']);
-        // ----------------------------------------------------------------
+        Route::get('/soalvalidasi/{id}', [ValidatorController::class, 'soalvalidasi']);
+
         Route::get('/tatanan', [ValidatorController::class, 'periode_tatanan'])->name('validator.tatanan');
-        Route::get('/assessment/{id}', [ValidatorController::class, 'assessment']);
         Route::get('/kelembagaan/{id}', [ValidatorController::class, 'kelembagaan']);
         Route::get('/pertanyaanlist/{id}', [ValidatorController::class, 'pertanyaanlist']);
         Route::get('/pertanyaanlembaga/{id}', [ValidatorController::class, 'pertanyaanlembaga']);
+        Route::get('/pengisiansoal/{id}', [ValidatorController::class, 'statuspengisian']);
         Route::get('/lembaga', [ValidatorController::class, 'periode_lembaga'])->name('validator.lembaga');
         Route::post('/updatelink', [ValidatorController::class, 'updatelink'])->name('validator.updatelink');
         Route::post('/updatefilelembaga', [ValidatorController::class,'updatefilelembaga'])->name('validator.updatefilelembaga');
@@ -133,6 +134,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/uploadfile', [ValidatorController::class, 'uploadfile'])->name('validator.uploadfile');
         Route::post('/start', [ValidatorController::class, 'start'])->name('validator.start');
         Route::get('/downloadfile/{id}', [ValidatorController::class, 'downloadfile']);
+
 
     });
     Route::prefix('pelaporan')->group(function () {

@@ -17,6 +17,26 @@ use Illuminate\Support\Facades\Storage;
 
 class ValidatorController extends Controller
 {
+    public function statuspengisian($id){
+        $result = DB::table('trx_pertanyaan')
+        ->select('tatanan_id',
+                 DB::raw('COUNT(*) as total_pertanyaan'),
+                 DB::raw('SUM(CASE WHEN jawaban IS NOT NULL THEN 1 ELSE 0 END) as dijawab'),
+                 DB::raw('SUM(CASE WHEN jawaban IS NULL THEN 1 ELSE 0 END) as belumdisi'),
+                 DB::raw('SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as disetujui'),
+                 DB::raw('SUM(CASE WHEN status = 2 THEN 1 ELSE 0 END) as ditolak'),
+                 DB::raw('SUM(CASE WHEN status IS NULL THEN 1 ELSE 0 END) as belumdiperiksa')
+                 )
+        ->where('id_main', $id)
+        ->groupBy('tatanan_id')
+        ->get();
+        foreach ($result as $key => $v) {
+            $result[$key]->nama_tatanan = DB::table('tatanan')->where('id', $v->tatanan_id)->value('nama_tatanan');
+        }
+
+
+        return response()->json($result);
+    }
     public function validator_periode(Request $request)
     {
         $periode = Periode::all();
@@ -24,13 +44,17 @@ class ValidatorController extends Controller
     }
     // pemda_list
     function pemda_list($periode){
-        // $uniqueUserIds = TrxPertanyaan::distinct()->where('id_periode',$periode)->pluck('user_id');
-        // $result = User::whereIn('id',$uniqueUserIds)->get();
         $result = DB::table('trx_main')
         ->join('users', 'users.id', '=', 'trx_main.id_user')
         ->select('trx_main.*', 'users.id as user_id', 'users.name')
         ->where('trx_main.id_periode', $periode)
         ->get();
+        foreach ($result as $key => $value) {
+            $result[$key]->jumlahtatanan =  DB::table('trx_tatanan')->where('id_periode', $periode)->count();;
+            $result[$key]->totalsoal = DB::table('trx_pertanyaan')->where('id_main', $value->id)->count();
+            $result[$key]->totalisi = DB::table('trx_pertanyaan')->where('id_main', $value->id)->whereNotNull('jawaban')->count();
+
+        }
         return response()->json($result);
     }
 
@@ -82,6 +106,30 @@ class ValidatorController extends Controller
             $result[$key]->nama_kelembagaan = TrxKelembagaan::where('id_periode', $periode)->where('id', $id)->pluck('nama_kelembagaan');
         }
         return response()->json($result);
+    }
+
+    public function soalvalidasi(Request $request, $id)
+    {
+        $id_ = (base64_decode($id));
+        $id_check = $id_;
+        $periode = (base64_decode($request->pr));
+        $periode = DB::table('trx_main')->where('id_periode', $periode)->where('id_user', $id_)->first();
+        $tatanan = TrxTatanan::where('id_periode', $periode->id_periode)->get();
+        $indikator = Indikator::all();
+
+        $pengisian = DB::table('trx_main')
+        ->join('users', 'users.id', '=', 'trx_main.id_user')
+        ->select('trx_main.*', 'users.id as user_id', 'users.name')
+        ->where('trx_main.id_periode',  $periode->id_periode)
+        ->where('trx_main.id_user', $id_)
+        ->get();
+        foreach ($pengisian as $key => $value) {
+            $pengisian[$key]->jumlahtatanan =  DB::table('trx_tatanan')->where('id_periode', $periode->id_periode)->count();;
+            $pengisian[$key]->totalsoal = DB::table('trx_pertanyaan')->where('id_main', $value->id)->count();
+            $pengisian[$key]->totalisi = DB::table('trx_pertanyaan')->where('id_main', $value->id)->whereNotNull('jawaban')->count();
+
+        }
+        return view('admin.validator.soalpengisian', compact('periode', 'tatanan', 'indikator', 'id_check', 'pengisian'));
     }
 
     public function assessment(Request $request, $id)
